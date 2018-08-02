@@ -1,9 +1,5 @@
 package dataBase;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.TreeSet;
-
 public class BusinessLogic 
 {
 	public static void main (String[] args) 
@@ -25,8 +21,7 @@ public class BusinessLogic
 		
 	//	Book b = new Book("book1", "Author1", "category",  2000 , 23 , true, 3 ,"description");
 		
-		
-		
+
 		Book b1 = new Book("baby","jafaar");
 		Book b2 = new Book("how3 Ever","lolo");
 		Book b3 = new Book("how","lolo");

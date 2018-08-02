@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 
 public class Author 
 {
@@ -26,7 +27,7 @@ public class Author
 		this.authorName = authorName;
 		this.nationality = nationality;
 		this.birthYear = birthYear;
-		this.numberOfBooks = numberOfBooks;
+		this.setNumberOfBooks(numberOfBooks);
 		this.authorsBookListe = new HashMap<Integer,Book>();	
 		addBookToAuthorList(book);
 
@@ -56,7 +57,8 @@ public class Author
 	//to print authorsBookList
 	public void printauthorsBookListe() 
 	{
-		Iterator mapIt = authorsBookListe.entrySet().iterator();
+		//Iterator mapIt = authorsBookListe.entrySet().iterator();
+		Iterator<Entry<Integer, Book>> mapIt = authorsBookListe.entrySet().iterator();
 		//System.out.println("List: ");
 		System.out.println("Author: "+this.id+" [authorName=" + authorName +
 							", nationality=" + nationality + ", birthYear=" + birthYear
@@ -139,6 +141,10 @@ public class Author
 		} else if (!authorName.equals(other.authorName))
 			return false;
 		return true;
+	}
+
+	public void setNumberOfBooks(int numberOfBooks) {
+		this.numberOfBooks = numberOfBooks;
 	}
 
 

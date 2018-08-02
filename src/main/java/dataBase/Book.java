@@ -1,7 +1,5 @@
 package dataBase;
 
-import java.util.HashMap;
-
 public class Book 
 {
 	private String bookName,description,category;

@@ -14,34 +14,66 @@ import java.sql.Statement;
 
 public class Sql implements IDataProvider
 {
+	
+//#################################################
+//Variables :
+	
+	
+	//to get the result from sql database
 	private ResultSet ausgabe;
+	
+	//to form sql command
 	private Statement statement;
-	private PreparedStatement preSteatement;
+	//private PreparedStatement preSteatement;
 
+	// to saves books temporary locally in a list 
 	private HashMap<Integer,Book> bookListe;
+	
+	// to saves authors temporary locally in a list 
 	private HashMap<Integer,Author> authorsListe;
+	
+	//if sql command is executed or not
 	private boolean excuted= false;
+	
+	//if there's connection to sql sever or not
 	private static boolean connected= false;
+	
+	//to give a book an id 
 	private static int bookId=1;
+	
+	//to give an author an id 
 	private static int authorId=1;
 	    
 	
+//#################################################
+//Constructors :	
 	
-	
-	    public Sql()
-	    {
+	/**
+	 * Creates a new object, checks if there's connection with sql server then creates database and tables in the server 
+	 *  and initialize a new bookListe and a new authorsListe
+	 */
+	 public Sql()
+	 {
 	    	verbind();
 	        createDataBase();
 	        bookListe = new HashMap<Integer,Book>();
 	        authorsListe= new HashMap<Integer,Author>();
     
-	    }
+	 }
 	   
-	     
-	    // saves book if connected to sql into sql database and locally 
+//#################################################
+//Overridden methods :	
+
+	 //###############################
+	 //Book's methods:
+		/**
+		 * 
+		 * @param book : a Book object
+		 * @return true if book is saved successfully and false if not
+		 */
 		//@Override
-		public boolean saveBook(Book book) 
-		{
+	public boolean saveBook(Book book) 
+	{
 			boolean b=false;
 			if(connected) 
 			{
@@ -103,14 +135,17 @@ public class Sql implements IDataProvider
 			
 			return b;
 
-		}
+	}
 
 
 
 
-		//prints  book in bookliste usind book id
+		/**
+		 * 
+		 * @param bookId : print a book information of a given book id number
+		 */
 		//@Override
-		public void printBook(int bookId) 
+	public void printBook(int bookId) 
 		{
 			
 			if(bookListe.containsKey(bookId)) 
@@ -128,7 +163,9 @@ public class Sql implements IDataProvider
 
 
 
-		//prints all books in bookliste
+		/**
+		 * Prints all books saved in the books list 
+		 */
 		//@Override
 		public void printBookListe() 
 		{
@@ -152,7 +189,175 @@ public class Sql implements IDataProvider
 
 		
 		
-//to get data from sql database and save it as a Book object into a Hashmap
+		//@Override
+/**
+ * @param bookId : an integer value of book id which is already been saved in the books list
+ * @return if the book id is in the books list it return a book object of the given id else return null
+ */
+		public Book editBook(int bookId) 
+		{
+			
+			if(bookListe.containsKey(bookId)) 
+			{
+				return bookListe.get(bookId);
+			}
+			else 
+			{
+				System.out.println("Book id: "+bookId+" ist nicht auf dem bookListe");
+			}
+			return null;
+			
+		}
+	   
+		
+		//@Override
+		/**
+		 * @return an integer number of the total books of an author
+		 */
+		public int numberOfBooksInListe() 
+		{
+			return bookListe.size();
+		}
+
+		
+		 //###############################
+		 //Authors's methods:	 
+		
+		//@Override
+		/**
+		 * 
+		 * @param author : a author object
+		 * @return true if author is saved successfully and false if not
+		 */
+		public boolean saveAuthor(Author author) {
+			
+			boolean b=false;
+			if(connected) 
+			{
+				getAuthorFromSql();
+				
+				
+				
+				if(!authorsListe.containsValue(author) )
+				{
+					authorId=authorsListe.size()+1;
+					author.setId(authorId);
+					
+					
+					
+					String befehl= "insert into book.authorsListe (`id`,`authorName`,`nationality`,`birthYear`,`numberOfBooks`)VALUES("
+								+ author.getId()+  ",\""+author.getAuthorName()+"\","+
+								"\""+author.getNationality()+"\","+author.getBirthYear()+","+ author.getNumberOfBooks()+");";
+					
+					
+			
+					
+					erstelleDatensatz(befehl);
+
+					authorsListe.put(author.getId(), author);
+					
+					if(excuted) {System.out.println(" Author saved to Sql!!");}
+					b=true;
+				}
+				else 
+				{
+					System.out.println("Author: \""+author.getAuthorName()+"\" existes in database!!");
+				}
+				
+				
+				
+			}
+			else 
+			{
+				System.out.println("No connection to Sql!!");
+			}
+			
+			
+			return b;
+			
+			
+			
+		}
+
+
+		//@Override
+		/**
+		 * 
+		 * @param authorId : print a book information of a given book id number
+		 */
+		public void printAuthor(int authorId) 
+		{
+
+			if(authorsListe.containsKey(authorId)) 
+			{
+				System.out.println(bookId+"="+authorsListe.get(authorId));
+			}
+			else 
+			{
+				System.out.println("Book id: "+authorId+" ist nicht auf dem authorsListe");
+			}
+			
+			
+		}
+
+
+		//@Override
+		/**
+		 * Prints all authors saved in the authors list 
+		 */
+		public void printAuthorListe() {
+			if(authorsListe.isEmpty()) 
+			{
+				System.out.println("Book list is empty !!");
+			}
+			else 
+			{
+			
+			Iterator<Entry<Integer, Author>> mapIt = authorsListe.entrySet().iterator();
+			System.out.println("number of Authors in the Liste: "+authorsListe.size());
+			while(mapIt.hasNext()) 
+			{
+				System.out.println(mapIt.next());
+			}
+			}
+		}
+
+
+		//@Override
+		/**
+		 * @param authorId : an integer value of author id which is already been saved in the authors list
+		 * @return if the author id is in the authors list it return an author object of the given id else return null
+		 */
+		public Author editAuthor(int authorId) {
+			if(authorsListe.containsKey(authorId)) 
+			{
+				return authorsListe.get(authorId);
+			}
+			else 
+			{
+				System.out.println("Author id: "+authorId+" ist nicht auf dem bookListe");
+			}
+			return null;
+			
+		}
+		   
+		//@Override
+		/**
+		 * 
+		 * @return return integer of the total number of saved authors
+		 */
+		public int numberOfAuthorsInListe() 
+		{
+			return authorsListe.size();
+		}
+
+				
+//#################################################
+//Other methods :	
+
+/**
+ * Reads the books information saved in sql database and saves it to local books list
+ */
 public void getBookFromSql() 
 {
 	
@@ -197,7 +402,9 @@ public void getBookFromSql()
 }
 
 
-
+/**
+ * Reads the authors information saved in sql database and saves it to local authors list
+ */
 public void getAuthorFromSql() 
 {
 
@@ -240,28 +447,17 @@ public void getAuthorFromSql()
 
 
 
-		// search booksListe using book id and return a book that can be modified
-		//@Override
-		public Book editBook(int bookId) 
-		{
-			
-			if(bookListe.containsKey(bookId)) 
-			{
-				return bookListe.get(bookId);
-			}
-			else 
-			{
-				System.out.println("Book id: "+bookId+" ist nicht auf dem bookListe");
-			}
-			return null;
-			
-		}
-	   
-	    
+
 
 		    
 	    
-	//create sql database and table list   
+/**
+ * Creates dataBase "book" and its tables "booksListe, authorsListe" if sql server is connected
+ * booksListe with fields : "id PRIMARY KEY,bookName, authorName, authorId, category, releaseYear, Preis,
+ * discount, discountAmount,description".
+ * 
+ * authorsListe with fields : "id PRIMARY KEY, authorName, nationality, birthYear,numberOfBooks ".
+ */
 public void createDataBase() 
 {
 	if(connected) 
@@ -288,7 +484,10 @@ public void createDataBase()
 		        
 }
 		    
-//connect to sql database
+/**
+ * checks if there's connection to sql server then open the connection
+ * @return return an open connection if sql server is connected else return null
+ */
 public Connection verbind()
 		    {
 		        
@@ -321,7 +520,10 @@ public Connection verbind()
 		    }
 		    
 
-//write data to sql Database
+/**
+ * Writes data to sql dataBase
+ * @param befehl : receives a string of sql command  
+ */
 public void erstelleDatensatz(String befehl){
 		               excuted = false;
 
@@ -343,122 +545,11 @@ public void erstelleDatensatz(String befehl){
 }
 
 
-//save author to sql
-//@Override
-public boolean saveAuthor(Author author) {
-	
-	boolean b=false;
-	if(connected) 
-	{
-		getAuthorFromSql();
-		
-		
-		
-		if(!authorsListe.containsValue(author) )
-		{
-			authorId=authorsListe.size()+1;
-			author.setId(authorId);
-			
-			
-			
-			String befehl= "insert into book.authorsListe (`id`,`authorName`,`nationality`,`birthYear`,`numberOfBooks`)VALUES("
-						+ author.getId()+  ",\""+author.getAuthorName()+"\","+
-						"\""+author.getNationality()+"\","+author.getBirthYear()+","+ author.getNumberOfBooks()+");";
-			
-			
-	
-			
-			erstelleDatensatz(befehl);
 
-			authorsListe.put(author.getId(), author);
-			
-			if(excuted) {System.out.println(" Author saved to Sql!!");}
-			b=true;
-		}
-		else 
-		{
-			System.out.println("Author: \""+author.getAuthorName()+"\" existes in database!!");
-		}
-		
-		
-		
-	}
-	else 
-	{
-		System.out.println("No connection to Sql!!");
-	}
-	
-	
-	return b;
-	
-	
-	
-}
-
-//print author using authorId
-//@Override
-public void printAuthor(int authorId) 
-{
-
-	if(authorsListe.containsKey(authorId)) 
-	{
-		System.out.println(bookId+"="+authorsListe.get(authorId));
-	}
-	else 
-	{
-		System.out.println("Book id: "+authorId+" ist nicht auf dem authorsListe");
-	}
-	
-	
-}
-
-//print authorsliste
-//@Override
-public void printAuthorListe() {
-	if(authorsListe.isEmpty()) 
-	{
-		System.out.println("Book list is empty !!");
-	}
-	else 
-	{
-	
-	Iterator<Entry<Integer, Author>> mapIt = authorsListe.entrySet().iterator();
-	System.out.println("number of Authors in the Liste: "+authorsListe.size());
-	while(mapIt.hasNext()) 
-	{
-		System.out.println(mapIt.next());
-	}
-	}
-}
-
-//return an author object using an authorid
-//@Override
-public Author editAuthor(int authorId) {
-	if(authorsListe.containsKey(authorId)) 
-	{
-		return authorsListe.get(authorId);
-	}
-	else 
-	{
-		System.out.println("Author id: "+authorId+" ist nicht auf dem bookListe");
-	}
-	return null;
-	
-}
-    
+ 
 
 
-public int numberOfBooksInListe() 
-{
-	return bookListe.size();
-}
-
-public int numberOfAuthorsInListe() 
-{
-	return authorsListe.size();
-}
-
-		
+	
 		
 	
 	
