@@ -38,6 +38,10 @@ public class Sql implements IDataProvider
 	//if there's connection to sql sever or not
 	private static boolean connected= false;
 	
+	//if data updated to sql sever or not
+	private static boolean updated= false;
+	
+	
 	//to give a book an id 
 	private static int bookId=1;
 	
@@ -80,52 +84,59 @@ public class Sql implements IDataProvider
 				
 				getBookFromSql();
 				getAuthorFromSql();
-				
-				if(!bookListe.containsValue(book) )
-				{
-					bookId=bookListe.size()+1;
-					book.setId(bookId);
 					
-					String befehl="insert into book.booksListe (`id`,`bookName`,`authorName`,`authorId`,`category`,`releaseYear`,"
-						+ "`Preis`,`discount`,`discountAmount`,`description`)VALUES("
-						+ book.getId()+  ",\""+book.getBookName()+"\","+
-						"\""+book.getAuthorName()+"\","+book.getAuthor().getId()+",\""+ book.getCategory()+"\","+ book.getReleaseYear()
-								+","+book.getPreis()+",\""+ book.isDiscount()+"\","+book.getDiscountAmount()+",\""+
-								book.getDescription()+"\");";
-		
+		if(!bookListe.containsValue(book)) 
+			{
+						bookId=bookListe.size()+1;
+						book.setId(bookId);
+						
+						String befehl="insert into book.booksListe (`id`,`bookName`,`authorName`,`authorId`,`category`,`releaseYear`,"
+							+ "`Preis`,`discount`,`discountAmount`,`description`)VALUES("
+							+ book.getId()+  ",\""+book.getBookName()+"\","+
+							"\""+book.getAuthorName()+"\","+book.getAuthor().getId()+",\""+ book.getCategory()+"\","+ book.getReleaseYear()
+									+","+book.getPreis()+",\""+ book.isDiscount()+"\","+book.getDiscountAmount()+",\""+
+									book.getDescription()+"\");";
+			
+	
+						erstelleDatensatz(befehl);
+						
 
-					erstelleDatensatz(befehl);
-					
-					//saveAuthor(book.getAuthor());
-					if(!saveAuthor(book.getAuthor()))
-					{			
-							for(int i = 1; i<= authorsListe.size(); i++) 
-							{
-								if(authorsListe.get(i).getAuthorName().equals(book.getAuthor().getAuthorName())) 
-								{
-								authorsListe.get(i).addBookToAuthorList(book);		
-								}
-							}
-
-								
+	
+	
+						if(excuted) {System.out.println(" book: \""+book.getBookName()+ "\" saved to Sql!!");}
+						b=true;
+	
 					}
+					else 
+					{
+						update(book);
+						//System.out.println("book:\" "+book.getBookName()+" \" .existes in sql!!");
+					};
 					
-					System.out.println("savebook size "+bookListe.size()+" bookid "+book.getId());
-					bookListe.put(book.getId(), book);
+			//saveAuthor(book.getAuthor());
+			if(!saveAuthor(book.getAuthor()))
+			{			
+					for(int i = 1; i<= authorsListe.size(); i++) 
+					{
+						if(authorsListe.get(i).getAuthorName().equals(book.getAuthor().getAuthorName())) 
+						{
+						authorsListe.get(i).addBookToAuthorList(book);							
+						//authorsListe.replace(i, authorsListe.get(i));
+						System.out.println(authorsListe.get(i)+"\n-----------------");
+						//update(authorsListe.get(i));
+						
+						}
+						
+						
+					}
+
 					
-
-
-					if(excuted) {System.out.println(" book saved to Sql!!");}
-					b=true;
-
-				}
-				else 
-				{
-					
-					System.out.println("book:\" "+book.getBookName()+" \" .existes in sql!!");
-				}
-				
-				
+		}
+		
+	//	System.out.println("savebook size "+bookListe.size()+" bookid "+book.getId());
+		bookListe.put(book.getId(), book);
+		
+		
 				
 			}
 			else 
@@ -133,6 +144,7 @@ public class Sql implements IDataProvider
 				System.out.println("No connection to Sql!!");
 			}
 			
+
 			return b;
 
 	}
@@ -256,7 +268,7 @@ public class Sql implements IDataProvider
 
 					authorsListe.put(author.getId(), author);
 					
-					if(excuted) {System.out.println(" Author saved to Sql!!");}
+					if(excuted){System.out.println(" author: \""+author.getAuthorName()+ "\" saved to Sql!!");}
 					b=true;
 				}
 				else 
@@ -423,6 +435,9 @@ public void getAuthorFromSql()
 			
 			authorId++;
 				 
+			//String authorName, String nationality, int birthYear, int numberOfBooks, Book book
+			
+			
 			if(!authorsListe.containsKey(ausgabe.getInt("id")) )
 			{
 			temp = new Author(ausgabe.getString("authorName"),ausgabe.getString("nationality"),
@@ -445,9 +460,50 @@ public void getAuthorFromSql()
 
 
 
+/**
+ * updates existing book in the database
+ * @param book : the book to be updated to database
+ * @return : true if update success
+ */
+public boolean update(Book book) 
+{
+	boolean b= false;
+	
+	String update="update book.booksListe set authorName=\""+book.getAuthorName()+"\","
+			+ "authorId="+book.getAuthor().getId()+",category= \""+book.getCategory()+"\","
+					+ "releaseYear="+book.getReleaseYear()+",Preis="+book.getPreis()+","
+							+ "discount=\""+book.isDiscount()+"\",discountAmount ="+book.getDiscountAmount()
+									+ ",description=\""+book.getDescription()+"\" "
+											+ "where bookName=\""+book.getBookName()+"\";";
 
+	erstelleDatensatz(update);
+    if(excuted){System.out.println("book: \""+book.getBookName()+"\"  update success!!"); b=true;}
+    return b;
+    
 
+	
+}
 
+/**
+ * updates existing author in the database
+ * @param author : the author to be updated to database
+ * @return : true if update success
+ */
+public boolean update(Author author) 
+{
+	boolean b= false;
+	
+	String update="update book.authorsListe set nationality=\""+author.getNationality()+"\","
+			+ "birthYear="+author.getBirthYear()+",numberOfBooks="+author.getNumberOfBooks()
+			+" where authorName=\" "+author.getAuthorName()+"\";";
+
+	erstelleDatensatz(update);
+    if(excuted){System.out.println("author: \""+author.getAuthorName()+"\" update success!!"); b=true;}
+    return b;
+    
+
+	
+}
 
 		    
 	    

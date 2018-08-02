@@ -48,9 +48,17 @@ public class Author
 	//to add a book to the author bookList
 	public void addBookToAuthorList(Book book) 
 	{	
-		this.authorsBookListe.put(book.getId(),book);
-		System.out.println("book: "+book.getBookName()+" added to author:"+this.authorName+" and list size: "+authorsBookListe.size());
+		if(book!=null) 
+		{
+			if(!authorsBookListe.containsValue(book)) 
+			{
+				this.authorsBookListe.put(book.getId(),book);
+				System.out.println("book: "+book.getBookName()+" added to author:"+this.authorName+" and list size: "+authorsBookListe.size());
+					
+			}
 			
+		}
+		
 	}
 	
 	

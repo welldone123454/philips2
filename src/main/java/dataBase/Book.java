@@ -49,8 +49,26 @@ public class Book
 	}
 
 
+	
+	
 
+	@Override
+	public boolean equals(Object obj) 
+	{
+		boolean b=false;
+		if (obj == null)
+			b=false;
+		Book other = (Book) obj;
 
+		if(this.bookName.equals(other.getBookName())  )
+				b= true; 
+		//System.out.println("equal after comapring "+b);
+		return b;
+	}
+	
+	
+	
+	
 
 	@Override
 	public int hashCode() {
@@ -62,45 +80,11 @@ public class Book
 	}
 
 
-
-
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		Book other = (Book) obj;
-		if(this.bookName.equals(other.getBookName()) && this.author.getAuthorName().equals(other.getAuthor().getAuthorName()) )
-				return true; 
-		
-		return false;
-		/*
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Book other = (Book) obj;
-		if (author == null) {
-			if (other.author != null)
-				return false;
-		} else if (!author.equals(other.author))
-			return false;
-		if (bookName == null) {
-			if (other.bookName != null)
-				return false;
-		} else if (!bookName.equals(other.bookName))
-			return false;
-		return true;
-		
-		*/
-	}
-	
-	
 	
 	//######################################
 	//setter und getter
+
+
 
 	public Author getAuthor() 
 	{
