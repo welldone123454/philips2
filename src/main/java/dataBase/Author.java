@@ -27,7 +27,7 @@ public class Author
 		this.authorName = authorName;
 		this.nationality = nationality;
 		this.birthYear = birthYear;
-		this.setNumberOfBooks(numberOfBooks);
+		this.numberOfBooks = numberOfBooks;
 		this.authorsBookListe = new HashMap<Integer,Book>();	
 		addBookToAuthorList(book);
 
@@ -141,10 +141,6 @@ public class Author
 		} else if (!authorName.equals(other.authorName))
 			return false;
 		return true;
-	}
-
-	public void setNumberOfBooks(int numberOfBooks) {
-		this.numberOfBooks = numberOfBooks;
 	}
 
 
