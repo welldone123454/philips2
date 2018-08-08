@@ -1,3 +1,4 @@
+package dataBase;
 
 import static org.junit.Assert.*;
 
@@ -9,7 +10,7 @@ import org.junit.Test;
 public class IDataProviderTest 
 {
 	 
-	 IDataProvider instance;
+	 IDataProvider dataProvider;
 	 Book book1; 
 	 Book book2; 
 	 
@@ -19,7 +20,7 @@ public class IDataProviderTest
 	{
 		System.out.println("-----------------initialising------------------");
 		
-		 instance = new ArrayListData();
+		 dataProvider = new ArrayListData();
 		 book1 = new Book("firstBook","firstAuthor");
 		 book2 = new Book("SecondBook","SecondAuthor");
 
@@ -37,8 +38,8 @@ public class IDataProviderTest
 		 
 		 System.out.println("-----------------SaveBookTest------------------");
 		 
-	    assertTrue(instance.saveBook(book1));
-	    assertEquals(1,instance.numberOfBooksInListe());
+	    assertTrue(dataProvider.saveBook(book1));
+	    assertEquals(1,dataProvider.numberOfBooksInListe());
 	    
 	    System.out.println("-----------------End of SaveBookTest------------------");
 	   
@@ -51,8 +52,8 @@ public class IDataProviderTest
 	 {
 		 System.out.println("-----------------SaveAuthorTest------------------");
 		
-	    assertTrue(instance.saveAuthor(book1.getAuthor()));
-	    assertEquals(1,instance.numberOfAuthorsInListe());
+	    assertTrue(dataProvider.saveAuthor(book1.getAuthor()));
+	    assertEquals(1,dataProvider.numberOfAuthorsInListe());
 	    assertEquals(1,book1.getAuthor().getNumberOfBooks());
 	    
 	    System.out.println("-----------------End of SaveAuthorTest------------------");
@@ -69,12 +70,12 @@ public class IDataProviderTest
 		
 		 System.out.println("-----------------EditBookTest------------------");
 		 
-		 instance.saveBook(book1);
-		 instance.saveBook(book2);
+		 dataProvider.saveBook(book1);
+		 dataProvider.saveBook(book2);
 		 
-		 System.out.println("hello "+instance.editBook(1).getBookName());
+		 System.out.println("hello "+dataProvider.getBook(1).getBookName());
 		 
-		 assertEquals(book1, instance.editBook(1));
+		 assertEquals(book1, dataProvider.getBook(1));
 		 
 		 System.out.println("-----------------End of EditBookTest------------------");
 	 }

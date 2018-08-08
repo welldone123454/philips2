@@ -130,7 +130,7 @@ public class ArrayListData implements IDataProvider
 	 * @param bookId : an integer value of book id which is already been saved in the books list
 	 * @return if the book id is in the books list it return a book object of the given id else return null
 	 */
-	public Book editBook(int bookId) 
+	public Book getBook(int bookId) 
 	{	
 		if(bookListe.containsKey(bookId)) 
 		{
@@ -231,7 +231,7 @@ public class ArrayListData implements IDataProvider
 	 * @param authorId : an integer value of author id which is already been saved in the authors list
 	 * @return if the author id is in the authors list it return an author object of the given id else return null
 	 */
-	public Author editAuthor(int authorId) 
+	public Author getAuthor(int authorId) 
 	{	
 		if(authorListe.containsKey(authorId)) 
 		{

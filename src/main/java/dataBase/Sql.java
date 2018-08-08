@@ -15,6 +15,12 @@ import java.sql.Statement;
 public class Sql implements IDataProvider
 {
 	
+	/**
+	 * Sql class : saves data to sql server
+	 * methods:
+	 * 1. saveBook(Book book) to save book to sql server
+	 */
+	
 //#################################################
 //Variables :
 	
@@ -48,7 +54,11 @@ public class Sql implements IDataProvider
 	//to give an author an id 
 	private static int authorId=1;
 	    
+	private Connection connection;
 	
+	private String connectionDriver;
+	
+	private String connectionAddress;
 //#################################################
 //Constructors :	
 	
@@ -58,6 +68,20 @@ public class Sql implements IDataProvider
 	 */
 	 public Sql()
 	 {
+	    	verbind();
+	        createDataBase();
+	        bookListe = new HashMap<Integer,Book>();
+	        authorsListe= new HashMap<Integer,Author>();
+    
+	 }
+	 
+	 /**
+	  * 
+	  * @param connectionDriver : the address of database to be connected
+	  */
+	 public Sql(String connectionAddress)
+	 {
+		 this.connectionAddress = connectionAddress;
 	    	verbind();
 	        createDataBase();
 	        bookListe = new HashMap<Integer,Book>();
@@ -79,7 +103,7 @@ public class Sql implements IDataProvider
 	public boolean saveBook(Book book) 
 	{
 			boolean b=false;
-			if(connected) 
+			if(isConnected()) 
 			{
 				
 				getBookFromSql();
@@ -152,6 +176,8 @@ public class Sql implements IDataProvider
 
 
 
+
+
 		/**
 		 * 
 		 * @param bookId : print a book information of a given book id number
@@ -206,7 +232,7 @@ public class Sql implements IDataProvider
  * @param bookId : an integer value of book id which is already been saved in the books list
  * @return if the book id is in the books list it return a book object of the given id else return null
  */
-		public Book editBook(int bookId) 
+		public Book getBook(int bookId) 
 		{
 			
 			if(bookListe.containsKey(bookId)) 
@@ -244,7 +270,7 @@ public class Sql implements IDataProvider
 		public boolean saveAuthor(Author author) {
 			
 			boolean b=false;
-			if(connected) 
+			if(isConnected()) 
 			{
 				getAuthorFromSql();
 				
@@ -340,7 +366,7 @@ public class Sql implements IDataProvider
 		 * @param authorId : an integer value of author id which is already been saved in the authors list
 		 * @return if the author id is in the authors list it return an author object of the given id else return null
 		 */
-		public Author editAuthor(int authorId) {
+		public Author getAuthor(int authorId) {
 			if(authorsListe.containsKey(authorId)) 
 			{
 				return authorsListe.get(authorId);
@@ -516,7 +542,7 @@ public boolean update(Author author)
  */
 public void createDataBase() 
 {
-	if(connected) 
+	if(isConnected()) 
 	{
 		        String command,command2,command3,command4;
 		         command = "CREATE DATABASE IF NOT EXISTS book CHARACTER SET UTF8;";
@@ -549,15 +575,15 @@ public Connection verbind()
 		        
 		        try
 		        {
-		        	String driver = "com.mysql.cj.jdbc.Driver";
+		         connectionDriver = "com.mysql.cj.jdbc.Driver";
 		           //  driver = "com.mysql.jdbc.Driver";
-		            
+		            connectionAddress="jdbc:mysql://localhost/mysql?useSSL=false&serverTimezone=UTC";
 		            //Aufruf des Treibers innerhalb der Klasse
-		            Class.forName(driver);
+		            Class.forName(connectionDriver);
 		            //Instanz einer Verbinfung über den Treibermanager und Funktion getConnection() mit Vorgabe des DB-Pfades
-		            Connection verbindung = DriverManager.getConnection("jdbc:mysql://localhost/mysql?useSSL=false&serverTimezone=UTC","root","");
+		            connection = DriverManager.getConnection(connectionAddress,"root","");
 		            connected=true;
-		            return verbindung;
+		            return connection;
 		            
 		        }
 		        catch(ClassNotFoundException abbruch) 
@@ -580,14 +606,15 @@ public Connection verbind()
  * Writes data to sql dataBase
  * @param befehl : receives a string of sql command  
  */
-public void erstelleDatensatz(String befehl){
+public int erstelleDatensatz(String befehl){
 		               excuted = false;
+		               int result=0;
 
 	 try
 		{
 		               Connection verbindung = verbind();
 		               PreparedStatement erstelleEintrag = verbindung.prepareStatement(befehl);
-		               erstelleEintrag.executeUpdate();
+		             result=  erstelleEintrag.executeUpdate();
 		               excuted = true;
 		 }
 		           catch(SQLException abbruch)
@@ -596,11 +623,18 @@ public void erstelleDatensatz(String befehl){
 		                       System.out.println("befehl not excuted!!");
 		                       abbruch.printStackTrace();
 		                   }
+	 return result;
 		           
 		    
 }
 
+public static boolean isConnected() {
+	return connected;
+}
 
+public static void setConnected(boolean connected) {
+	Sql.connected = connected;
+}
 
  
 

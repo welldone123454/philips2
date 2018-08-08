@@ -36,8 +36,8 @@ public class BusinessLogic
 			sqlData.saveBook(b1);
 			sqlData.saveBook(b2);
 			sqlData.saveBook(b3);
-		//	sqlData.saveBook(b4);
-		//	sqlData.saveBook(b5);
+			sqlData.saveBook(b4);
+			sqlData.saveBook(b5);
 			
 		//	System.out.println(b1.getId());
 		//	System.out.println(b2.getId());

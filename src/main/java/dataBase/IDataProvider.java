@@ -24,7 +24,7 @@ public interface IDataProvider
 	 * @param bookId : an integer value of book id which is already been saved in the books list
 	 * @return if the book id is in the books list it return a book object of the given id else return null
 	 */
-	Book editBook(int bookId);
+	Book getBook(int bookId);
 	
 	/**
 	 * 
@@ -56,7 +56,7 @@ public interface IDataProvider
 	 * @param authorId : an integer value of author id which is already been saved in the authors list
 	 * @return if the author id is in the authors list it return an author object of the given id else return null
 	 */
-	Author editAuthor(int authorId);
+	Author getAuthor(int authorId);
 	
 	/**
 	 * 
