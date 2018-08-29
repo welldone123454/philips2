@@ -41,6 +41,15 @@ public class Author
 
 	}
 	
+	public Author(String authorName,String bookName) {
+		super();
+		this.authorName = authorName;
+		this.authorsBookListe = new HashMap<Integer,Book>();
+		Book book= new Book(bookName, authorName);
+		addBookToAuthorList(book);
+
+	}
+	
 	
 	//######################
 	//other methods

@@ -4,14 +4,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-public class ArrayListData implements IDataProvider
+public class ArrayListData implements IDataProviderBook, IDataProviderAuthor
 {	
 
 	//to save books in a list locally
-	private static HashMap<Integer,Book> bookListe;
+	private static HashMap<Integer,Book> bookList;
 	
 	//to save authors in a list locally
-	private static HashMap<Integer,Author> authorListe;
+	private static HashMap<Integer,Author> authorList;
 	
 	//to give an author an id
 	private static int authorId;
@@ -27,8 +27,8 @@ public class ArrayListData implements IDataProvider
 	 */
 	public ArrayListData() 
 	{
-		 bookListe = new HashMap<Integer,Book>();
-		 authorListe = new  HashMap<Integer,Author>();
+		 bookList = new HashMap<Integer,Book>();
+		 authorList = new  HashMap<Integer,Author>();
 	}
 
 	
@@ -40,39 +40,35 @@ public class ArrayListData implements IDataProvider
 	//Book's methods :
 	
 	
-	//@Override
+	
 	/**
 	 * 
 	 * @param book : a Book object
 	 * @return true if book is saved successfully and false if not
 	 */
+	@Override
 	public boolean saveBook(Book book) 
 	{
 		boolean b=false;
-		if(!bookListe.containsValue(book))
+		if(!bookList.containsValue(book))
 		{
-			bookId=bookListe.size()+1;
+			bookId=bookList.size()+1;
 			book.setId(bookId);
 			
 			
 			
 			if(!saveAuthor(book.getAuthor()))
-			{
-				
-//							for (int key : authorListe.keySet()) {
-							//    String value = map.get(key);
-							
-					for(int i = 1; i<= authorListe.size(); i++) 
+			{						
+					for(int i = 1; i<= authorList.size(); i++) 
 					{
-						if(authorListe.get(i).getAuthorName().equals(book.getAuthor().getAuthorName())) 
+						if(authorList.get(i).getAuthorName().equals(book.getAuthor().getAuthorName())) 
 						{
-						authorListe.get(i).addBookToAuthorList(book);		
+						authorList.get(i).addBookToAuthorList(book);		
 						}
 					}
-
 						
 			}
-			bookListe.put(book.getId(), book);
+			bookList.put(book.getId(), book);
 			System.out.println("Data Saved!!");
 			b=true;
 		}
@@ -86,20 +82,21 @@ public class ArrayListData implements IDataProvider
 
 	
 	
-	//@Override
+	
 	/**
 	 * 
 	 * @param bookId : print a book information of a given book id number
 	 */
+	@Override
 	public void printBook(int bookId) 
 	{	
-		if(bookListe.containsKey(bookId)) 
+		if(bookList.containsKey(bookId)) 
 		{
-			System.out.println(bookId+"="+bookListe.get(bookId));
+			System.out.println(bookId+"="+bookList.get(bookId));
 		}
 		else 
 		{
-			System.out.println("Book: \""+bookListe.get(bookId).getBookName()+"\" is not in BooksListe!!");
+			System.out.println("Book: \""+bookList.get(bookId).getBookName()+"\" is not in BooksList!!");
 		}
 		
 		
@@ -107,15 +104,16 @@ public class ArrayListData implements IDataProvider
 	
 	
 	
-	//@Override
+	
 	/**
 	 * Prints all books saved in the books list 
 	 */
+	@Override
 	public void printBookListe() 
 	{	
 		//Iterator mapIt = bookListe.entrySet().iterator();
-		Iterator<Entry<Integer, Book>> mapIt = bookListe.entrySet().iterator();
-		System.out.println("Books in the List: "+bookListe.size());
+		Iterator<Entry<Integer, Book>> mapIt = bookList.entrySet().iterator();
+		System.out.println("Books in the List: "+bookList.size());
 		while(mapIt.hasNext()) 
 		{
 			System.out.println(mapIt.next());
@@ -125,16 +123,17 @@ public class ArrayListData implements IDataProvider
 	
 	
 	
-	//@Override
+	
 	/**
 	 * @param bookId : an integer value of book id which is already been saved in the books list
 	 * @return if the book id is in the books list it return a book object of the given id else return null
 	 */
+	@Override
 	public Book getBook(int bookId) 
 	{	
-		if(bookListe.containsKey(bookId)) 
+		if(bookList.containsKey(bookId)) 
 		{
-			return bookListe.get(bookId);
+			return bookList.get(bookId);
 		}
 		else 
 		{
@@ -146,34 +145,36 @@ public class ArrayListData implements IDataProvider
 	
 	
 	
-	//@Override
+	
 	/**
 	 * 
 	 * @return return integer of the total number of saved books
 	 */
+	@Override
 	public int numberOfBooksInListe() 
 	{
-		return bookListe.size();
+		return bookList.size();
 	}
 
 	
 	//##########################################################
 	//Author's methods: 
 	
-	//@Override
+	
 	/**
 	 * 
 	 * @param author : a author object
 	 * @return true if author is saved successfully and false if not
 	 */
+	@Override
 	public boolean saveAuthor(Author author) {
 		boolean b=false;
-		if(!authorListe.containsValue(author))
+		if(!authorList.containsValue(author))
 		{
-			authorId=authorListe.size()+1;
+			authorId=authorList.size()+1;
 			author.setId(authorId);
 			
-			authorListe.put(author.getId(), author);
+			authorList.put(author.getId(), author);
 			System.out.println("Author Saved!!");
 			b=true;
 		}
@@ -188,35 +189,37 @@ public class ArrayListData implements IDataProvider
 
 
 	
-	//@Override
+	
 	/**
 	 * 
 	 * @param authorId : print a book information of a given book id number
 	 */
+	@Override
 	public void printAuthor(int authorId) 
 	{	
-		if(authorListe.containsKey(authorId)) 
+		if(authorList.containsKey(authorId)) 
 		{
-			System.out.println( authorListe.get(authorId));
+			System.out.println( authorList.get(authorId));
 		}
 		else 
 		{
-			System.out.println("Author: \""+authorListe.get(authorId).getAuthorName()+"\" is not in AuthorsListe!!");
+			System.out.println("Author: \""+authorList.get(authorId).getAuthorName()+"\" is not in AuthorsList!!");
 		}
 	
 	}
 	
 	
 	
-	//@Override
+	
 	/**
 	 * Prints all authors saved in the authors list 
 	 */
+	@Override
 	public void printAuthorListe() 
 	{	
 		//Iterator mapIt = authorListe.entrySet().iterator();
-		Iterator<Entry<Integer, Author>> mapIt = authorListe.entrySet().iterator();
-		System.out.println("Authors in the List: "+authorListe.size());
+		Iterator<Entry<Integer, Author>> mapIt = authorList.entrySet().iterator();
+		System.out.println("Authors in the List: "+authorList.size());
 		while(mapIt.hasNext()) 
 		{
 			System.out.println(mapIt.next());
@@ -226,20 +229,21 @@ public class ArrayListData implements IDataProvider
 	
 	
 	
-	//@Override
+	
 	/**
 	 * @param authorId : an integer value of author id which is already been saved in the authors list
 	 * @return if the author id is in the authors list it return an author object of the given id else return null
 	 */
+	@Override
 	public Author getAuthor(int authorId) 
 	{	
-		if(authorListe.containsKey(authorId)) 
+		if(authorList.containsKey(authorId)) 
 		{
-			return authorListe.get(authorId);
+			return authorList.get(authorId);
 		}
 		else 
 		{
-			System.out.println("Author: \""+authorListe.get(authorId).getAuthorName()+"\" is not in AuthorsListe!!");
+			System.out.println("Author: \""+authorList.get(authorId).getAuthorName()+"\" is not in AuthorsListe!!");
 		}
 
 		return null;
@@ -250,14 +254,15 @@ public class ArrayListData implements IDataProvider
 
 
 
-	//@Override
+	
 	/**
 	 * 
 	 * @return return integer of the total number of saved authors
 	 */
+	@Override
 	public int numberOfAuthorsInListe() 
 	{
-		return authorListe.size();
+		return authorList.size();
 	}
 	
 	
@@ -269,7 +274,7 @@ public class ArrayListData implements IDataProvider
 	 * @return returns a HashMap list of the books which been saved
 	 */
 	public static HashMap<Integer, Book> getBookListe() {
-		return bookListe;
+		return bookList;
 	}
 
 
@@ -279,7 +284,7 @@ public class ArrayListData implements IDataProvider
 	 * @return returns a HashMap list of the authors which been saved
 	 */
 	public static HashMap<Integer, Author> getAuthorListe() {
-		return authorListe;
+		return authorList;
 	}
 
 	
@@ -320,22 +325,7 @@ public class ArrayListData implements IDataProvider
 	}
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 	
 }

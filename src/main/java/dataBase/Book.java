@@ -22,6 +22,7 @@ public class Book
 		
 		this.bookName = bookName;
 		this.author =  new Author(authorName,this);
+
 	}
 
 
@@ -43,7 +44,8 @@ public class Book
 	//other methods
 	
 	@Override
-	public String toString() {
+	public String toString() 
+	{
 		return "BookName: " + bookName + ", Author: "+getAuthorName()+", category: " + category + ", releaseYear= " + releaseYear + ", preis= " + preis
 				+", isDiscount ?: " + discount + ", discountAmount= " + discountAmount + ", finalPreis= " + finalPreis +", description: " + description +   " ]";
 	}

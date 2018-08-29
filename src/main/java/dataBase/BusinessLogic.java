@@ -4,8 +4,11 @@ public class BusinessLogic
 {
 	public static void main (String[] args) 
 	{
-	//	IDataProvider Localdata = new ArrayListData();
-		IDataProvider sqlData = new Sql();
+	//	IDataProviderBook localdata = new ArrayListData();
+		IDataProviderBook sqlDataProviderBook = new DBDataProvider();
+		
+	//	IDataProviderAuthor localdataAuthor = new ArrayListData();
+	//	IDataProviderAuthor sqlDataProviderAuthor = new DBDataProvider();
 		
 		
 		/**
@@ -24,20 +27,19 @@ public class BusinessLogic
 
 		Book b1 = new Book("baby","jafaar");
 		Book b2 = new Book("how3 Ever","lolo");
-		Book b3 = new Book("how","lolo");
+		Book b3 = new Book("how","lolo3");
 		Book b4 = new Book("wowo4","toto4");
 		Book b5 = new Book("wowo5","toto5");
 		
-		//Author 
-		
+
 		//################################
 		//with sql database if connected to sql
 		
-			sqlData.saveBook(b1);
-			sqlData.saveBook(b2);
-			sqlData.saveBook(b3);
-			sqlData.saveBook(b4);
-			sqlData.saveBook(b5);
+			sqlDataProviderBook.saveBook(b1);
+		//	sqlDataProviderBook.saveBook(b2);
+		//	sqlDataProviderBook.saveBook(b3);
+		//	sqlDataProviderBook.saveBook(b4);
+		//	sqlDataProviderBook.saveBook(b5);
 			
 		//	System.out.println(b1.getId());
 		//	System.out.println(b2.getId());
@@ -45,27 +47,24 @@ public class BusinessLogic
 		//	sqlData.printAuthorListe();
 		//	sqlData.printBookListe();
 		
-		//sqlData.editBook(2).setBookName("go to hill");
+
 		//sqlData.printBookListe();
 		//sqlData.printBook(2);
 		
 		//##################################################
 		// with local database
 		
-		//Localdata.saveBook(b1);
-		//Localdata.saveBook(b2);
-		//Localdata.saveBook(b3);
-		//Localdata.saveBook(b4);
-		//Localdata.saveBook(b5);
+	//	localdata.saveBook(b1);
+	//	localdata.saveBook(b2);
+	//	localdata.saveBook(b3);
+	//	localdata.saveBook(b4);
+	//	localdata.saveBook(b5);
 		
-		//Localdata.printBookListe();
-		//Localdata.printAuthorListe();
-		//System.out.println(b2.equals(b3));
-		
-	//	Localdata.editBook(2).getAuthor().printauthorsBookListe();
-		
-		//Localdata.editBook(2).setBookName("willkommen");
-		//Localdata.printBook(2);
+		//localdata.printBookListe();
+	//	localdata.printBookListe();
+
+	
+		//localdata.printBook(2);
 	
 		
 
