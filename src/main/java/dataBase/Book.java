@@ -1,6 +1,6 @@
 package dataBase;
 
-public class Book 
+public class Book
 {
 	private String bookName,description,category;
 	private int discountAmount,releaseYear;
@@ -31,6 +31,7 @@ public class Book
 	{
 		super();
 		this.bookName = bookName;
+		this.author =  new Author(authorName,this);
 		this.description = description;
 		this.category = category;
 		this.discountAmount = discountAmount;
@@ -64,7 +65,6 @@ public class Book
 
 		if(this.bookName.equals(other.getBookName())  )
 				b= true; 
-		//System.out.println("equal after comapring "+b);
 		return b;
 	}
 	

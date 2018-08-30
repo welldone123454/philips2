@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 class IDataProviderBookTest {
 
-	 IDataProviderBook dataProviderBook;
+	IDataProvidable dataProvider;
 	 Book book1; 
 	 Book book2; 
 	 
@@ -25,7 +25,7 @@ class IDataProviderBookTest {
 	{
 		System.out.println("-----------------initialising------------------");
 		
-		 dataProviderBook = new ArrayListData();
+		 dataProvider = new ArrayListData();
 		 book1 = new Book("firstBook","firstAuthor");
 		 book2 = new Book("SecondBook","SecondAuthor");
 
@@ -42,10 +42,10 @@ class IDataProviderBookTest {
 		 
 		 System.out.println("-----------------SaveBookTest------------------");
 		 
-	    assertTrue(dataProviderBook.saveBook(book1));
+	    assertTrue(dataProvider.saveBook(book1));
 	    
 	  //  assertEquals(1,dataProvider.numberOfBooksInListe());
-	    assertThat(1, is(equalTo(dataProviderBook.numberOfBooksInListe())));
+	    assertThat(1, is(equalTo(dataProvider.numberOfBooksInListe())));
 	    
 	    
 	    
@@ -63,13 +63,13 @@ class IDataProviderBookTest {
 		
 		 System.out.println("-----------------getBookTest------------------");
 		 
-		 dataProviderBook.saveBook(book1);
-		 dataProviderBook.saveBook(book2);
+		 dataProvider.saveBook(book1);
+		 dataProvider.saveBook(book2);
 		 
-		 System.out.println("hello "+dataProviderBook.getBook(1).getBookName());
+		 System.out.println("hello "+dataProvider.getBook(1).getBookName());
 		 
 		// assertEquals(book1, dataProvider.getBook(1));
-		 assertThat(dataProviderBook.getBook(1), is(equalTo(book1)));
+		 assertThat(dataProvider.getBook(1), is(equalTo(book1)));
 		 
 		 System.out.println("-----------------End of getBookTest------------------");
 	 }

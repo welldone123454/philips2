@@ -18,8 +18,7 @@ import org.junit.Before;
 
 public class DBDataProviderTest {
 	
-	IDataProviderBook sqlDataProviderBook;
-	IDataProviderAuthor sqlDataProviderAuthor;
+	IDataProvidable sqlDataProvider;
 	 Book book1; 
 	 Book book2; 
 	 Author author1;
@@ -45,18 +44,6 @@ public class DBDataProviderTest {
 		 System.out.println("-----------------End of initialising------------------");
 	}
 	
-	
-	
-	@Test
-	public void connectToDataBaseTest() 
-	{
-		
-	}
-	
-	
-	
-	
-	
 	/**
 	 * test the saveBook method which should receive a Book object and save it using DBDataProvider in  a sql server 
 	 */
@@ -66,14 +53,14 @@ public class DBDataProviderTest {
 		
 		System.out.println("-----------------Test SaveBook------------------");
 		
-		sqlDataProviderBook = mock(DBDataProvider.class);
+		sqlDataProvider = mock(DBDataProvider.class);
 		
-		when(sqlDataProviderBook.saveBook(book1) ).thenReturn(true);
-		assertThat(true, is(equalTo(sqlDataProviderBook.saveBook(book1) ) ) );
+		when(sqlDataProvider.saveBook(book1) ).thenReturn(true);
+		assertThat(true, is(equalTo(sqlDataProvider.saveBook(book1) ) ) );
 		
 		
-		when(sqlDataProviderBook.numberOfBooksInListe() ).thenReturn(1);		
-		assertThat(1, is(equalTo(sqlDataProviderBook.numberOfBooksInListe() ) ) );		
+		when(sqlDataProvider.numberOfBooksInListe() ).thenReturn(1);		
+		assertThat(1, is(equalTo(sqlDataProvider.numberOfBooksInListe() ) ) );		
 		
 		System.out.println("-----------------End of SaveBookTest------------------");
 	}
@@ -89,14 +76,14 @@ public class DBDataProviderTest {
 		
 		System.out.println("-----------------Test SaveAuthor------------------");
 		
-		sqlDataProviderAuthor = mock(DBDataProvider.class);
+		sqlDataProvider = mock(DBDataProvider.class);
 		
-		when(sqlDataProviderAuthor.saveAuthor(author1) ).thenReturn(true);
-		assertThat(true, is(equalTo(sqlDataProviderAuthor.saveAuthor(author1) ) ) );	
+		when(sqlDataProvider.saveAuthor(author1) ).thenReturn(true);
+		assertThat(true, is(equalTo(sqlDataProvider.saveAuthor(author1) ) ) );	
 		
-		when(sqlDataProviderAuthor.numberOfAuthorsInListe() ).thenReturn(1);	
+		when(sqlDataProvider.numberOfAuthorsInListe() ).thenReturn(1);	
 		
-		assertThat(1, is(equalTo(sqlDataProviderAuthor.numberOfAuthorsInListe() ) ) );		
+		assertThat(1, is(equalTo(sqlDataProvider.numberOfAuthorsInListe() ) ) );		
 		
 		System.out.println("-----------------End of SaveAuthorTest------------------");
 	}
@@ -111,10 +98,10 @@ public class DBDataProviderTest {
 	{
 		System.out.println("-----------------Test getBook------------------");
 		
-		sqlDataProviderBook = mock(DBDataProvider.class);
+		sqlDataProvider = mock(DBDataProvider.class);
 		
-		when(sqlDataProviderBook.getBook(1)).thenReturn(book1);
-		assertThat(book1, is(equalTo(sqlDataProviderBook.getBook(1) ) ) );	
+		when(sqlDataProvider.getBook(1)).thenReturn(book1);
+		assertThat(book1, is(equalTo(sqlDataProvider.getBook(1) ) ) );	
 		
 		
 		System.out.println("-----------------End of getBookTest------------------");
@@ -130,10 +117,10 @@ public class DBDataProviderTest {
 	{
 		System.out.println("-----------------Test getAuthor------------------");
 
-		sqlDataProviderAuthor = mock(DBDataProvider.class);
+		sqlDataProvider = mock(DBDataProvider.class);
 		
-		when(sqlDataProviderAuthor.getAuthor(1)).thenReturn(author1);
-		assertThat(author1, is(equalTo(sqlDataProviderAuthor.getAuthor(1) ) ) );	
+		when(sqlDataProvider.getAuthor(1)).thenReturn(author1);
+		assertThat(author1, is(equalTo(sqlDataProvider.getAuthor(1) ) ) );	
 		
 		System.out.println("-----------------End of getAuthorTest------------------");
 	}

@@ -4,11 +4,9 @@ public class BusinessLogic
 {
 	public static void main (String[] args) 
 	{
-	//	IDataProviderBook localdata = new ArrayListData();
-		IDataProviderBook sqlDataProviderBook = new DBDataProvider();
-		
-	//	IDataProviderAuthor localdataAuthor = new ArrayListData();
-	//	IDataProviderAuthor sqlDataProviderAuthor = new DBDataProvider();
+		IDataProvidable localdata = new ArrayListData();
+	//	IDataProvidable sqlDataProvider = new DBDataProvider();
+
 		
 		
 		/**
@@ -25,40 +23,54 @@ public class BusinessLogic
 	//	Book b = new Book("book1", "Author1", "category",  2000 , 23 , true, 3 ,"description");
 		
 
-		Book b1 = new Book("baby","jafaar");
-		Book b2 = new Book("how3 Ever","lolo");
-		Book b3 = new Book("how","lolo3");
-		Book b4 = new Book("wowo4","toto4");
-		Book b5 = new Book("wowo5","toto5");
+		Book b1 = new Book("baby23","jafaara");
+		Book b2 = new Book("baby32 Ever","jafaar");
+	//	Book b3 = new Book("how","lolo3");
+	//	Book b4 = new Book("wowo4","toto4");
+	//	Book b5 = new Book("wowo5","toto5");
 		
-
 		//################################
 		//with sql database if connected to sql
 		
-			sqlDataProviderBook.saveBook(b1);
-		//	sqlDataProviderBook.saveBook(b2);
-		//	sqlDataProviderBook.saveBook(b3);
-		//	sqlDataProviderBook.saveBook(b4);
-		//	sqlDataProviderBook.saveBook(b5);
+		//	sqlDataProvider.saveBook(b1);
+		//	sqlDataProvider.saveBook(b2);
+		//	sqlDataProvider.saveBook(b3);
+		//	sqlDataProvider.saveBook(b4);
+		//	sqlDataProvider.saveBook(b5);
 			
-		//	System.out.println(b1.getId());
-		//	System.out.println(b2.getId());
-		//	System.out.println(b3.getId());
-		//	sqlData.printAuthorListe();
-		//	sqlData.printBookListe();
-		
+			
 
-		//sqlData.printBookListe();
-		//sqlData.printBook(2);
+		//	System.out.println(sqlDataProviderBook.getBook(1));
+		//	sqlDataProvider.printBookListe();
+		//	sqlDataProvider.printAuthorListe();
+
+
+		//sqlDataProviderBook.printBookListe();
+	//	sqlDataProviderBook.printBook(2);
+		
+	//	b2.setAuthorName("new author name");
+		
+		
+		System.out.println("----------------------------");
+		
+	//	sqlDataProviderBook.printBook(2);
+		
+		
 		
 		//##################################################
 		// with local database
 		
-	//	localdata.saveBook(b1);
-	//	localdata.saveBook(b2);
+		localdata.saveBook(b1);
+		localdata.saveBook(b2);
 	//	localdata.saveBook(b3);
 	//	localdata.saveBook(b4);
 	//	localdata.saveBook(b5);
+		
+		localdata.printBook(1);
+		
+	//	b1.setAuthorName("new author name");
+		//localdata.printBook(1);
+		
 		
 		//localdata.printBookListe();
 	//	localdata.printBookListe();

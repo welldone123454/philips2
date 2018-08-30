@@ -6,7 +6,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
-public class Author 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class Author
 {
 
 	private String authorName;
@@ -15,6 +18,8 @@ public class Author
 	
 	//HashSet to save the authorsBooklist
 	private  HashMap<Integer,Book> authorsBookListe;
+	
+	private static final Logger LOG = LoggerFactory.getLogger(Author.class);
 
 	
 	
@@ -31,6 +36,15 @@ public class Author
 		this.authorsBookListe = new HashMap<Integer,Book>();	
 		addBookToAuthorList(book);
 
+	}
+	
+	public Author(String authorName, String nationality, int birthYear, int numberOfBooks) {
+		super();
+		this.authorName = authorName;
+		this.nationality = nationality;
+		this.birthYear = birthYear;
+		this.numberOfBooks = numberOfBooks;
+		this.authorsBookListe = new HashMap<Integer,Book>();	
 	}
 
 	public Author(String authorName,Book book) {
@@ -62,8 +76,8 @@ public class Author
 			if(!authorsBookListe.containsValue(book)) 
 			{
 				this.authorsBookListe.put(book.getId(),book);
-				System.out.println("book: "+book.getBookName()+" added to author:"+this.authorName+" and list size: "+authorsBookListe.size());
-					
+				//System.out.println("book: "+book.getBookName()+" added to author:"+this.authorName+" and list size: "+authorsBookListe.size());
+				//LOG.info("book: \"{}\" added to author: \"{}\" and AuthorsBookList size: {}",book.getBookName(),this.authorName,authorsBookListe.size());	
 			}
 			
 		}
@@ -74,16 +88,24 @@ public class Author
 	//to print authorsBookList
 	public void printauthorsBookListe() 
 	{
-		//Iterator mapIt = authorsBookListe.entrySet().iterator();
-		Iterator<Entry<Integer, Book>> mapIt = authorsBookListe.entrySet().iterator();
-		//System.out.println("List: ");
-		System.out.println("Author: "+this.id+" [authorName=" + authorName +
-							", nationality=" + nationality + ", birthYear=" + birthYear
-							+ ", numberOfBooks=" + authorsBookListe.size()+ "]");
-		while(mapIt.hasNext()) 
+		if(!authorsBookListe.isEmpty()) 
 		{
-			System.out.println(mapIt.next());
+			//Iterator mapIt = authorsBookListe.entrySet().iterator();
+			Iterator<Entry<Integer, Book>> mapIt = authorsBookListe.entrySet().iterator();
+			//System.out.println("List: ");
+			System.out.println("Author: "+this.id+" [authorName=" + authorName +
+								", nationality=" + nationality + ", birthYear=" + birthYear
+								+ ", numberOfBooks=" + authorsBookListe.size()+ "]");
+			while(mapIt.hasNext()) 
+			{
+				System.out.println(mapIt.next());
+			}
 		}
+		else 
+		{
+			LOG.warn("AuthorsBookList is Empty!!");
+		}
+		
 	}
 	
 
@@ -123,16 +145,22 @@ public class Author
 		this.birthYear = birthYear;
 	}
 	
-	public int getNumberOfBooks() 
+	public int getNumberOfAuthorsBooks() 
 	{
-		return this.authorsBookListe.size();
+		int result=this.authorsBookListe.size();
+		if(numberOfBooks!=0)
+		{
+			result=numberOfBooks;
+		}
+		
+		return result;
 	}
 
 
 	@Override
 	public String toString() {
 		return "Author: "+this.id+"[authorName=" + authorName + ", nationality=" + nationality + ", birthYear=" + birthYear
-				+ ", numberOfBooks=" + getNumberOfBooks()+ "]" ;
+				+ ", numberOfBooks=" + getNumberOfAuthorsBooks()+ "]" ;
 	}
 	
 	@Override
@@ -142,7 +170,7 @@ public class Author
 		result = prime * result + ((authorName == null) ? 0 : authorName.hashCode());
 		return result;
 	}
-
+/*
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -159,8 +187,20 @@ public class Author
 			return false;
 		return true;
 	}
+*/
+	
+	@Override
+	public boolean equals(Object obj) 
+	{
+		boolean b=false;
+		if (obj == null)
+			b=false;
+		Author other = (Author) obj;
 
-
+		if(this.authorName.equals(other.getAuthorName())  )
+				b= true; 
+		return b;
+	}
 	
 	
 }

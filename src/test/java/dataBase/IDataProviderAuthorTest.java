@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 class IDataProviderAuthorTest {
 
-	 IDataProviderAuthor dataProviderAuthor;
+	IDataProvidable dataProvider;
 	 Author author1; 
 	 Author author2; 
 	 
@@ -24,7 +24,7 @@ class IDataProviderAuthorTest {
 	{
 		System.out.println("-----------------initialising------------------");
 		
-		dataProviderAuthor = new ArrayListData();
+		dataProvider = new ArrayListData();
 		 author1 = new Author("FirstAuthor","FirstBook");
 		 author2 = new Author("SecondAuthor","SecondBook");
 
@@ -41,12 +41,12 @@ class IDataProviderAuthorTest {
 	 {
 		 System.out.println("-----------------SaveAuthorTest------------------");
 		
-	    assertTrue(dataProviderAuthor.saveAuthor(author1));
+	    assertTrue(dataProvider.saveAuthor(author1));
 	    // assertEquals(1,dataProvider.numberOfAuthorsInListe());
-	    assertThat(1, is(equalTo(dataProviderAuthor.numberOfAuthorsInListe())));
+	    assertThat(1, is(equalTo(dataProvider.numberOfAuthorsInListe())));
 	    
 	    //assertEquals(1,book1.getAuthor().getNumberOfBooks());
-	    assertThat(1, is(equalTo(author1.getNumberOfBooks())));
+	    assertThat(1, is(equalTo(author1.getNumberOfAuthorsBooks())));
 	    
 	    System.out.println("-----------------End of SaveAuthorTest------------------");
 	    
@@ -63,11 +63,11 @@ class IDataProviderAuthorTest {
 		
 		 System.out.println("-----------------getAuthorTest------------------");
 		 
-		 dataProviderAuthor.saveAuthor(author1);
-		 dataProviderAuthor.saveAuthor(author2);
+		 dataProvider.saveAuthor(author1);
+		 dataProvider.saveAuthor(author2);
 
 		// assertEquals(book1, dataProvider.getBook(1));
-		 assertThat(dataProviderAuthor.getAuthor(1), is(equalTo(author1)));
+		 assertThat(dataProvider.getAuthor(1), is(equalTo(author1)));
 		 
 		 System.out.println("-----------------End of getBookTest------------------");
 	 }

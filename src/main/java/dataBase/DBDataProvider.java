@@ -11,14 +11,17 @@ import java.util.Map.Entry;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class DBDataProvider implements IDataProviderBook, IDataProviderAuthor
+
+//public class DBDataProvider implements IDataProviderBook, IDataProviderAuthor
+public class DBDataProvider  implements IDataProvidable
 {
 	
 	/**
 	 * Sql class : saves data to sql server
-	 * methods:
-	 * 1. saveBook(Book book) to save book to sql server
+	 * 
 	 */
 	
 //#################################################
@@ -36,7 +39,7 @@ public class DBDataProvider implements IDataProviderBook, IDataProviderAuthor
 	private HashMap<Integer,Book> bookListe;
 	
 	// to saves authors temporary locally in a list 
-	private HashMap<Integer,Author> authorsListe;
+	private  HashMap<Integer,Author> authorsListe;
 	
 	//if sql command is executed or not
 	private boolean excuted= false;
@@ -69,6 +72,8 @@ public class DBDataProvider implements IDataProviderBook, IDataProviderAuthor
 	//the name of the authors table
 	private String authorsTable ="authorsListe";
 	
+	private static final Logger LOG = LoggerFactory.getLogger(DBDataProvider.class);
+	
 	
 //#################################################
 //Constructors :	
@@ -79,11 +84,10 @@ public class DBDataProvider implements IDataProviderBook, IDataProviderAuthor
 	 */
 	 public DBDataProvider()
 	 {
-	    	connectToDataBase();
-	        createDataBase();
+		 super();
 	        bookListe = new HashMap<Integer,Book>();
 	        authorsListe= new HashMap<Integer,Author>();
-    
+	        createDataBase();
 	 }
 	 
 	 /**
@@ -93,10 +97,10 @@ public class DBDataProvider implements IDataProviderBook, IDataProviderAuthor
 	 public DBDataProvider(String connectionAddress)
 	 {
 		 this.connectionAddress = connectionAddress;
-	    	connectToDataBase();
-	        createDataBase();
-	        bookListe = new HashMap<Integer,Book>();
-	        authorsListe= new HashMap<Integer,Author>();
+		 bookListe = new HashMap<Integer,Book>();
+	     authorsListe= new HashMap<Integer,Author>();
+	     createDataBase();
+	        
     
 	 }
 	   
@@ -120,16 +124,32 @@ public class DBDataProvider implements IDataProviderBook, IDataProviderAuthor
 @Override
 public boolean saveBook(Book book) 
 {
-	boolean b=false;
-	if(isConnected()) 
-	{
-		synchronizeBooksWithSql();
-			
+
+	boolean result=false;
+	if(connectToDataBase()!=null) 
+	{	
 		if(!bookListe.containsValue(book)) 
 		{
 			bookId=bookListe.size()+1;
-			book.setId(bookId);				
-		
+			book.setId(bookId);		
+			if(!authorsListe.containsValue(book.getAuthor())) 
+			{
+				saveAuthor(book.getAuthor());
+			}
+			else 
+			{
+				for(int i = 1; i<= authorsListe.size(); i++)    //search in the authorslist for the author of the book we wanted to save
+				{
+					if(authorsListe.get(i).getAuthorName().equals(book.getAuthor().getAuthorName())) 
+					{
+						authorsListe.get(i).addBookToAuthorList(book);	 //update the booknumber of the existing author
+						book.setAuthor(authorsListe.get(i));			//give the value of the existing author to the booksauthor we wanted to save
+						update(book.getAuthor());
+					}
+				}
+			}
+				
+			
 			String command= String.format("insert into %s.%s (`id`,`bookName`,`authorName`,`authorId`,`category`,`releaseYear`,"
 											+ "`Preis`,`discount`,`discountAmount`,`description`)VALUES("
 											+ book.getId()+  ",\""+book.getBookName()+"\","+
@@ -138,42 +158,35 @@ public boolean saveBook(Book book)
 											book.getDescription()+"\");"	,dataBaseName,booksTable);
 	
 			applyCommandToSql(command);
+			
 
-			if(excuted) {System.out.println(" book: \""+book.getBookName()+ "\" saved to Sql!!");}
-			b=true;
+			bookListe.put(bookId, book);
+
+			if(excuted) 
+			{
+				//System.out.println(" book: \""+book.getBookName()+ "\" saved to Sql!!");
+				LOG.info(" book: \"{}\" saved to Sql!!",book.getBookName());
+			}
+			
 	
 		}
 		else 
 		{
 			update(book);
-		};
-		
-					
-		if(!saveAuthor(book.getAuthor()))
-		{			
-			for(int i = 1; i<= authorsListe.size(); i++) 
-			{
-				if(authorsListe.get(i).getAuthorName().equals(book.getAuthor().getAuthorName())) 
-				{
-					authorsListe.get(i).addBookToAuthorList(book);							
-					System.out.println(authorsListe.get(i)+"\n-----------------");
-				}		
-			}		
-		}
-		
-		bookListe.put(book.getId(), book);
+		}		
+		result=true;
+
 				
 	}
 	else 
 	{
-		System.out.println("No connection to Sql!!");
+		//System.out.println("No connection to Sql!!");
+		LOG.error("No connection to Sql!!");
 	}			
-	return b;
+
+	return result;
+
 }
-
-
-
-
 
 
 /**
@@ -189,7 +202,8 @@ public void printBook(int bookId)
 	}
 	else 
 	{
-		System.out.println("Book id: "+bookId+" ist nicht auf dem bookListe");
+		//System.out.println("Book id: "+bookId+" ist nicht auf dem bookListe");
+		LOG.warn("Book id: \"{}\" is not available in the bookList",bookId);
 	}			
 }
 
@@ -200,9 +214,16 @@ public void printBook(int bookId)
 @Override
 public void printBookListe() 
 {
+	/*
+	for(int i=1; i<=bookListe.size();i++) 
+	{
+		System.out.println(bookListe.get(i).getBookName()+bookListe.get(i).getAuthorName());
+	}
+	*/
 	if(bookListe.isEmpty()) 
 	{
 		System.out.println("Book list is empty !!");
+		LOG.warn("Book list is empty !!");
 	}
 	else 
 	{
@@ -213,6 +234,9 @@ public void printBookListe()
 			System.out.println(mapIt.next());
 		}
 	}
+	
+	
+	
 }
 
 		
@@ -225,14 +249,48 @@ public void printBookListe()
 @Override
 public Book getBook(int bookId) 
 {
-	if(bookListe.containsKey(bookId)) 
+	if(bookId>0 && bookListe.containsKey(bookId)) 
 	{
 		return bookListe.get(bookId);
 	}
-	else 
+	/*
+	for(Book bookTemp : bookListe.values()) 
 	{
-		System.out.println("Book id: "+bookId+" ist nicht auf dem bookListe");
+		if(bookTemp.getId() == bookId) 
+		{
+			return bookTemp;
+		}
+		else 
+		{
+			//System.out.println("Book id: "+bookId+" ist nicht auf dem bookListe");
+			LOG.warn("Book id: \"{}\" is not available in the bookList",bookId);
+		}
+		
 	}
+	*/
+	return null;
+}
+
+/**
+ * @param book : a book object 
+ * @return if the book  is in the books list it return that book else return null
+ */
+public Book getBook(Book book) 
+{
+	for(Book bookTemp : bookListe.values()) 
+	{
+		if(bookTemp.equals(book)) 
+		{
+			return bookTemp;
+		}
+		else 
+		{
+			//System.out.println("Book id: "+bookId+" ist nicht auf dem bookListe");
+			LOG.warn("Book id: \"{}\" is not available in the bookList",bookId);
+		}
+		
+	}
+	
 	return null;
 }
 	   
@@ -263,10 +321,9 @@ public int numberOfBooksInListe()
 @Override
 public boolean saveAuthor(Author author) 
 {
-	boolean b=false;
-	if(isConnected()) 
+	boolean result=false;
+	if(connectToDataBase()!=null) 
 	{
-		synchronizeAuthorsWithSql();
 
 		if(!authorsListe.containsValue(author) )
 		{
@@ -275,25 +332,32 @@ public boolean saveAuthor(Author author)
 			
 			String command= String.format("insert into %s.%s (`id`,`authorName`,`nationality`,`birthYear`,`numberOfBooks`)VALUES("
 											+ author.getId()+  ",\""+author.getAuthorName()+"\","+
-											"\""+author.getNationality()+"\","+author.getBirthYear()+","+ author.getNumberOfBooks()+");"
+											"\""+author.getNationality()+"\","+author.getBirthYear()+","+ author.getNumberOfAuthorsBooks()+");"
 											,dataBaseName,authorsTable);
 
 			applyCommandToSql(command);
 			authorsListe.put(author.getId(), author);
 					
-			if(excuted){System.out.println(" author: \""+author.getAuthorName()+ "\" saved to Sql!!");}
-			b=true;
+			if(excuted)
+			{
+				//System.out.println(" author: \""+author.getAuthorName()+ "\" saved to Sql!!");
+				LOG.info("Author: \"{}\" saved to Sql!!",author.getAuthorName());
+			}
+			result=true;
 		}
 		else 
 		{
-			System.out.println("Author: \""+author.getAuthorName()+"\" existes in database!!");
+			update(author);
+			//System.out.println("Author: \""+author.getAuthorName()+"\" existes in database!!");
+			//LOG.warn("Author: \"{}\" existes in database!!!!",author.getAuthorName());
 		}			
 	}
 	else 
 	{
-		System.out.println("No connection to Sql!!");
+		//System.out.println("No connection to Sql!!");
+		LOG.warn("No connection to Sql!!");
 	}
-	return b;			
+	return result;	
 }
 
 
@@ -307,11 +371,12 @@ public void printAuthor(int authorId)
 {
 	if(authorsListe.containsKey(authorId)) 
 	{
-		System.out.println(bookId+"="+authorsListe.get(authorId));
+		System.out.println(authorId+"="+authorsListe.get(authorId));
 	}
 	else 
 	{
-		System.out.println("Book id: "+authorId+" ist nicht auf dem authorsListe");
+		//System.out.println("Author id: "+authorId+" ist nicht auf dem authorsListe");
+		LOG.warn("Author id: \"{}\" is not available in the authorsList!!",authorId);
 	}
 }
 
@@ -325,7 +390,8 @@ public void printAuthorListe()
 {
 	if(authorsListe.isEmpty()) 
 	{
-		System.out.println("Book list is empty !!");
+		System.out.println("AuthorList is empty !!");
+		LOG.warn("AuthorsList is empty !!");
 	}
 	else 
 	{
@@ -353,7 +419,8 @@ public Author getAuthor(int authorId)
 	}
 	else 
 	{
-		System.out.println("Author id: "+authorId+" ist nicht auf dem bookListe");
+		//System.out.println("Author id: "+authorId+" ist nicht auf dem bookListe");
+		LOG.warn("Author id: \"{}\" is not available in the authorsList!!",authorId);
 	}
 	return null;
 }
@@ -380,33 +447,42 @@ public int numberOfAuthorsInListe()
 public void synchronizeBooksWithSql() 
 {
 	Book temp;
+	Statement statement2;
 	try
 	{
 		String command = String.format("select * from %s.%s;",dataBaseName,booksTable);
 		//String befehl = "select * from book.booksListe where id= '?*' ";
 		//preSteatement.setString(1, UserEingabe);
-		Connection verbindung = connectToDataBase();
-		statement = verbindung.createStatement();
-	
-		ausgabe = statement.executeQuery(command);
-		while(ausgabe.next())
+		Connection connection = connectToDataBase();
+		if(connection!=null) 
 		{
-			bookId++;	 
-			//if book not available locally then save it to the local booksList
-			if(!bookListe.containsKey(ausgabe.getInt("id")) )
-			{
-				temp = new Book(ausgabe.getString("bookName"),ausgabe.getString("authorName"),
-								ausgabe.getString("category"), ausgabe.getInt("releaseYear"),ausgabe.getDouble("Preis"),
-								ausgabe.getString("discount"),ausgabe.getInt("discountAmount"),ausgabe.getString("Description"));
-					
-				bookListe.put(ausgabe.getInt("id"), temp);
-			}	
-		}		
+			statement2 = connection.createStatement();
+			
+			ausgabe = statement2.executeQuery(command);
+			
+				while(ausgabe.next())
+				{
+					bookId++;	 
+					//if book not available locally then save it to the local booksList
+					if(!bookListe.containsKey(ausgabe.getInt("id")) )
+						{
+							temp = new Book(ausgabe.getString("bookName"),ausgabe.getString("authorName"),
+											ausgabe.getString("category"), ausgabe.getInt("releaseYear"),ausgabe.getDouble("Preis"),
+											ausgabe.getString("discount"),ausgabe.getInt("discountAmount"),ausgabe.getString("Description"));
+								
+							bookListe.put(ausgabe.getInt("id"), temp);
+						}
+						
+					}
+						
+				}	
+
 	}
 	catch(SQLException abbruch)
 	{
 	excuted = false;
-	System.out.println(abbruch.getMessage());
+	//System.out.println(abbruch.getMessage());
+	LOG.error("SQLException : {}",abbruch.getMessage());
 	}		       
 	
 }
@@ -419,32 +495,41 @@ public void synchronizeBooksWithSql()
 public void synchronizeAuthorsWithSql() 
 {
 
-	Author temp;		
+	Author temp;
+	Statement statement2;
 	try
 	{
-		String befehl = String.format("select * from %s.%s;",dataBaseName,authorsTable);
+		String command = String.format("select * from %s.%s;",dataBaseName,authorsTable);
 				
 		Connection verbindung = connectToDataBase();
-		statement = verbindung.createStatement();
-		ausgabe = statement.executeQuery(befehl);
-		while(ausgabe.next())
+		if(connection!=null) 
 		{
-			authorId++;
-			//String authorName, String nationality, int birthYear, int numberOfBooks, Book book
-			//if author not available locally then save it to the local authorsList
-			if(!authorsListe.containsKey(ausgabe.getInt("id")) )
-			{
-				temp = new Author(ausgabe.getString("authorName"),ausgabe.getString("nationality"),
-								ausgabe.getInt("birthYear"), ausgabe.getInt("numberOfBooks"),null);
-					
-				authorsListe.put(ausgabe.getInt("id"), temp);
-			}	
-		}		
+			statement2 = verbindung.createStatement();
+			ausgabe = statement2.executeQuery(command);
+			
+			
+				while(ausgabe.next())
+				{
+					authorId++;
+						//String authorName, String nationality, int birthYear, int numberOfBooks, Book book
+						//if author not available locally then save it to the local authorsList
+						if(!authorsListe.containsKey(ausgabe.getInt("id")) )
+						{
+							temp = new Author(ausgabe.getString("authorName"),ausgabe.getString("nationality"),
+											ausgabe.getInt("birthYear"), ausgabe.getInt("numberOfBooks"));
+							//	System.out.println("Synchronize author "+ausgabe.getInt("numberOfBooks") );
+							authorsListe.put(ausgabe.getInt("id"), temp);
+						}	
+					}
+
+				}	
+			
 	}
 	catch(SQLException abbruch)
 	{
 	excuted = false;
-	System.out.println(abbruch.getMessage());
+	//System.out.println(abbruch.getMessage());
+	LOG.error("SQLException : {}",abbruch.getMessage());
 	}		       
 	
 }
@@ -460,7 +545,7 @@ public void synchronizeAuthorsWithSql()
 public boolean update(Book book) 
 {
 	boolean result= false;
-	String update=String.format("update %s.%s set authorName=\""+book.getAuthorName()+"\","
+	String updateCommand=String.format("update %s.%s set authorName=\""+book.getAuthorName()+"\","
 								+ "authorId="+book.getAuthor().getId()+",category= \""+book.getCategory()+"\","
 								+ "releaseYear="+book.getReleaseYear()+",Preis="+book.getPreis()+","
 								+ "discount=\""+book.isDiscount()+"\",discountAmount ="+book.getDiscountAmount()
@@ -468,8 +553,13 @@ public boolean update(Book book)
 								+ "where bookName=\""+book.getBookName()+"\";"   
 								,dataBaseName,booksTable);
 
-	applyCommandToSql(update);
-    if(excuted){System.out.println("book: \""+book.getBookName()+"\"  update success!!"); result=true;}
+	applyCommandToSql(updateCommand);
+    if(excuted)
+    {
+    	//System.out.println("book: \""+book.getBookName()+"\"  update success!!"); 
+    	LOG.info("book: \"{}\"  update success!!",book.getBookName());
+    	result=true;
+    }
     return result;
 }
 
@@ -482,12 +572,17 @@ public boolean update(Author author)
 {
 	boolean result= false;
 	
-	String update=String.format("update %s.%s set nationality=\""+author.getNationality()+"\","
-								+ "birthYear="+author.getBirthYear()+",numberOfBooks="+author.getNumberOfBooks()
+	String updateCommand=String.format("update %s.%s set nationality=\""+author.getNationality()+"\","
+								+ "birthYear="+author.getBirthYear()+",numberOfBooks="+author.getNumberOfAuthorsBooks()
 								+" where authorName=\" "+author.getAuthorName()+"\";"
 								,dataBaseName,authorsTable);
-	applyCommandToSql(update);
-    if(excuted){System.out.println("author: \""+author.getAuthorName()+"\" update success!!"); result=true;}
+	applyCommandToSql(updateCommand);
+    if(excuted)
+    {
+    	//System.out.println("author: \""+author.getAuthorName()+"\" update success!!"); 
+    	LOG.info("author: \"{}\"  update success!!",author.getAuthorName());
+    	result=true;
+    }
     return result;
 }
 
@@ -502,7 +597,7 @@ public boolean update(Author author)
  */
 public void createDataBase() 
 {
-	if(isConnected()) 
+	if(connectToDataBase()!=null) 
 	{
 		
 	    String command,command2,command3,command4;
@@ -522,7 +617,14 @@ public void createDataBase()
 		applyCommandToSql(command2);
 		applyCommandToSql(command4);
 		
-		if(excuted){System.out.println("DataBase creation success!!");}       
+		
+        synchronizeBooksWithSql();
+        synchronizeAuthorsWithSql();
+		if(excuted)
+		{
+			//System.out.println("DataBase creation success!!");
+			LOG.info("DataBase creation success!!");
+		}       
 	}     
 		        
 }
@@ -549,15 +651,17 @@ public Connection connectToDataBase()
 	catch(ClassNotFoundException e) 
 	{
 		//     abbruch.printStackTrace();
-		System.err.println("Caught ClassNotFoundException: " + e.getMessage());
-		System.out.println("No Connection to Sql DataBase");
+		//System.err.println("Caught ClassNotFoundException: " + e.getMessage());
+		//System.out.println("No Connection to Sql DataBase");
+		LOG.error("Caught ClassNotFoundException: {} ", e.getMessage());
 		connected=false;
 	}
 	catch(SQLException e) 
 	{
 		//      abbruch.printStackTrace();
-		System.err.println("Caught SQLException: " + e.getMessage());
-		System.out.println("No Connection to Sql DataBase");
+		//System.err.println("Caught SQLException: " + e.getMessage());
+		//System.out.println("No Connection to Sql DataBase");
+		LOG.error("Caught SQLException: {} ", e.getMessage());
 		connected=false;
     }
 	return null;
@@ -576,17 +680,19 @@ public int applyCommandToSql(String command)
 	int result=0;
 	try
 	{
-		Connection verbindung = connectToDataBase();
-		PreparedStatement erstelleEintrag = verbindung.prepareStatement(command);
-		result=  erstelleEintrag.executeUpdate();
+		Connection connection = connectToDataBase();
+		PreparedStatement preparedStatement = connection.prepareStatement(command);
+		result=  preparedStatement.executeUpdate();
 		excuted = true; 
 	}
-	catch(SQLException abbruch)
+	catch(SQLException e)
 	{
 		excuted = false;
-		System.out.println("command not excuted!!");
-		abbruch.printStackTrace();
+		//System.out.println("command not executed!!");
+		//e.printStackTrace();
+		LOG.error("command not executed!! \n Caught SQLException: {} ", e.getMessage());
 	}
+	System.out.println("applycommand"+result);
 	return result;	           
 }
 

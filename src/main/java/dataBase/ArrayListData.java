@@ -4,7 +4,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-public class ArrayListData implements IDataProviderBook, IDataProviderAuthor
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+//public class ArrayListData implements IDataProviderBook, IDataProviderAuthor
+public class ArrayListData implements IDataProvidable
 {	
 
 	//to save books in a list locally
@@ -18,6 +22,8 @@ public class ArrayListData implements IDataProviderBook, IDataProviderAuthor
 	
 	//to give a book an id
 	private static int bookId;
+	
+	private static final Logger LOG = LoggerFactory.getLogger(ArrayListData.class);
 	
 	//############################################################################
 	//Constructors:
@@ -69,12 +75,14 @@ public class ArrayListData implements IDataProviderBook, IDataProviderAuthor
 						
 			}
 			bookList.put(book.getId(), book);
-			System.out.println("Data Saved!!");
+			//System.out.println("Data Saved!!");
+			LOG.info(" book: \"{}\" saved to Sql!!",book.getBookName());
 			b=true;
 		}
 		else 
 		{		
-			System.out.println("book id "+book.getId()+" existes in database!!");
+			//System.out.println("book id "+book.getId()+" existes in database!!");
+			LOG.warn(" book: \"{}\" exists in database!!",book.getBookName());
 		}
 		
 		return b;
@@ -93,10 +101,12 @@ public class ArrayListData implements IDataProviderBook, IDataProviderAuthor
 		if(bookList.containsKey(bookId)) 
 		{
 			System.out.println(bookId+"="+bookList.get(bookId));
+			
 		}
 		else 
 		{
-			System.out.println("Book: \""+bookList.get(bookId).getBookName()+"\" is not in BooksList!!");
+			//System.out.println("Book: \""+bookList.get(bookId).getBookName()+"\" is not in BooksList!!");
+			LOG.warn(" book: \"{}\" in not in BooksList!!",bookId);
 		}
 		
 		
@@ -137,7 +147,8 @@ public class ArrayListData implements IDataProviderBook, IDataProviderAuthor
 		}
 		else 
 		{
-			System.out.println("BookId: \""+bookId+"\" is not in BooksListe!!");
+			//System.out.println("BookId: \""+bookId+"\" is not in BooksListe!!");
+			LOG.info(" book: \"{}\" is not in the booklist!!",bookId);
 		}
 		return null;
 		
@@ -175,12 +186,14 @@ public class ArrayListData implements IDataProviderBook, IDataProviderAuthor
 			author.setId(authorId);
 			
 			authorList.put(author.getId(), author);
-			System.out.println("Author Saved!!");
+			//System.out.println("Author Saved!!");
+			LOG.info(" Author: \"{}\" saved!!",author.getAuthorName());
 			b=true;
 		}
 		else 
 		{			
-			System.out.println("Author: \""+author.getAuthorName()+"\" existes in database!!");
+			//System.out.println("Author: \""+author.getAuthorName()+"\" existes in database!!");
+			LOG.warn(" Author: \"{}\" exists in database!!",author.getAuthorName());
 		}
 		
 		return b;
@@ -203,7 +216,8 @@ public class ArrayListData implements IDataProviderBook, IDataProviderAuthor
 		}
 		else 
 		{
-			System.out.println("Author: \""+authorList.get(authorId).getAuthorName()+"\" is not in AuthorsList!!");
+			//System.out.println("Author: \""+authorList.get(authorId).getAuthorName()+"\" is not in AuthorsList!!");
+			LOG.warn(" Author: \"{}\" is not in authorsList!!",authorId);
 		}
 	
 	}
@@ -243,7 +257,8 @@ public class ArrayListData implements IDataProviderBook, IDataProviderAuthor
 		}
 		else 
 		{
-			System.out.println("Author: \""+authorList.get(authorId).getAuthorName()+"\" is not in AuthorsListe!!");
+			//System.out.println("Author: \""+authorList.get(authorId).getAuthorName()+"\" is not in AuthorsListe!!");
+			LOG.info(" Author: \"{}\" is not in authorsList!!",authorId);
 		}
 
 		return null;
