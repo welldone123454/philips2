@@ -1,12 +1,17 @@
 package dataBase;
 
+import java.util.HashMap;
+
 public class BusinessLogic 
 {
 	public static void main (String[] args) 
 	{
-		IDataProvidable localdata = new ArrayListData();
-	//	IDataProvidable sqlDataProvider = new DBDataProvider();
 
+		//connectionDriver = "com.mysql.cj.jdbc.Driver";
+		//connectionAddress="jdbc:mysql://localhost/mysql?useSSL=false&serverTimezone=UTC";
+			
+		IDataProviderBook dataProviderBook;
+		IDataProviderAuthor dataProviderAuthor;
 		
 		
 		/**
@@ -24,61 +29,51 @@ public class BusinessLogic
 		
 
 		Book b1 = new Book("baby23","jafaara");
-		Book b2 = new Book("baby32 Ever","jafaar");
-	//	Book b3 = new Book("how","lolo3");
-	//	Book b4 = new Book("wowo4","toto4");
-	//	Book b5 = new Book("wowo5","toto5");
+		Book b2 = new Book("baby32_Ever","jafaar");
+		Book b3 = new Book("wowo4","lolo3");
+		Book b4 = new Book("wowo4","toto4");
+		Book b5 = new Book("wowo5","toto4");
+		Book b6 = new Book("wowo6","toto6");
 		
 		//################################
 		//with sql database if connected to sql
 		
-		//	sqlDataProvider.saveBook(b1);
-		//	sqlDataProvider.saveBook(b2);
-		//	sqlDataProvider.saveBook(b3);
-		//	sqlDataProvider.saveBook(b4);
-		//	sqlDataProvider.saveBook(b5);
+		try
+		{
+			//dataProviderBook = new DBBookDataProvider();
+			//dataProviderAuthor = new DBAuthorDataProvider();
+			
+			dataProviderBook = new ArrayListDataProviderBook();
+			dataProviderAuthor = new ArrayListDataProviderAuthor();
+
+			dataProviderBook.saveBook(b1);
+			dataProviderBook.saveBook(b2);
+		//	dataProviderBook.saveBook(b3);
+		//	dataProviderBook.saveBook(b4);
+		//	dataProviderBook.saveBook(b5);
+		//	dataProviderBook.saveBook(b6);
+			
+		//	dataProviderBook.printBook(3);
+			//dataProviderAuthor.printAuthorListe();
+			System.out.println(dataProviderBook.getBook(b2));
 			
 			
-
-		//	System.out.println(sqlDataProviderBook.getBook(1));
-		//	sqlDataProvider.printBookListe();
-		//	sqlDataProvider.printAuthorListe();
-
-
-		//sqlDataProviderBook.printBookListe();
-	//	sqlDataProviderBook.printBook(2);
-		
-	//	b2.setAuthorName("new author name");
+			
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 		System.out.println("----------------------------");
 		
-	//	sqlDataProviderBook.printBook(2);
-		
-		
+
 		
 		//##################################################
 		// with local database
 		
-		localdata.saveBook(b1);
-		localdata.saveBook(b2);
-	//	localdata.saveBook(b3);
-	//	localdata.saveBook(b4);
-	//	localdata.saveBook(b5);
-		
-		localdata.printBook(1);
-		
-	//	b1.setAuthorName("new author name");
-		//localdata.printBook(1);
-		
-		
-		//localdata.printBookListe();
-	//	localdata.printBookListe();
 
-	
-		//localdata.printBook(2);
-	
-		
 
 		
 	}
