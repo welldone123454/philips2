@@ -54,12 +54,33 @@ public class ArrayListDataProviderAuthor implements IDataProviderAuthor
 		else 
 		{			
 			//System.out.println("Author: \""+author.getAuthorName()+"\" existes in database!!");
+			updat(author);
 			LOG.warn(" Author: \"{}\" exists in database!!",author.getAuthorName());
+			
 		}
 		
 		return b;
 		
 	}
+	
+	/**
+	 * to update the value of an author object 
+	 * @param author: the new author to replace the old one 
+	 * @return true if replacement succeed false if not
+	 */
+	private boolean updat(Author author) 
+	{
+		boolean result=false;
+		Author oldAuthor=getAuthor(author);
+		author.setId(oldAuthor.getId());
+		result =authorList.replace(oldAuthor.getId(), oldAuthor, author);
+		
+		return result;
+	}
+	
+	
+	
+	
 
 	/**
 	 * 
@@ -78,6 +99,35 @@ public class ArrayListDataProviderAuthor implements IDataProviderAuthor
 			LOG.warn(" Author: \"{}\" is not in authorsList!!",authorId);
 		}
 	
+	}
+	
+	/**
+	 * 
+	 * @param author : print an Author information of a given author object
+	 */
+	public void printAuthor(Author author) 
+	{
+		String authorName="";
+		for(int i = 1; i<=authorList.size();i++ ) 
+		{
+			authorName=authorList.get(i).getAuthorName();
+			if(authorName.equals(author.getAuthorName())) 
+			{
+				System.out.println(authorList.get(i));
+			}
+		}
+		
+		/*
+		Iterator<Entry<Integer, Author>> mapIt = authorList.entrySet().iterator();
+
+		while(mapIt.hasNext()) 
+		{
+			if(mapIt.next().getValue().getAuthorName().equals(author.getAuthorName())) 
+			{
+				System.out.println(mapIt.next());
+			}
+		}
+		*/
 	}
 	
 	

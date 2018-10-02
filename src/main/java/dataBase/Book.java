@@ -6,7 +6,7 @@ public class Book
 	private int discountAmount,releaseYear;
 	private int id;
 	private double preis;
-	private double finalPreis = preis - (preis * discountAmount /100);
+	private double finalPreis;
 	private String discount;
 	private Author author;
 	
@@ -37,7 +37,8 @@ public class Book
 		this.discountAmount = discountAmount;
 		this.releaseYear = releaseYear;
 		this.preis = preis;
-		this.discount = discount;		
+		this.discount = discount;	
+		this.finalPreis = preis - (preis * discountAmount /100);
 	
 	}
 	
@@ -48,7 +49,7 @@ public class Book
 	public String toString() 
 	{
 		return "BookName: " + bookName + ", Author: "+getAuthorName()+", category: " + category + ", releaseYear= " + releaseYear + ", preis= " + preis
-				+", isDiscount ?: " + discount + ", discountAmount= " + discountAmount + ", finalPreis= " + finalPreis +", description: " + description +   " ]";
+				+", isDiscount ?: " + discount + ", discountAmount= " + discountAmount + ", finalPreis= " + this.finalPreis +", description: " + description +   " ]";
 	}
 
 

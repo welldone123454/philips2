@@ -64,10 +64,10 @@ public class DBBookDataProvider implements IDataProviderBook
 		 *  @param connectionDriver: the connectionsDriver to be connected to database through it.
 		 *  						 example connectionDriver = "com.mysql.cj.jdbc.Driver";
 		 *  @param connectionAddress: the database address to be connected to.
-		 *  						  example connectionAddress="jdbc:mysql://localhost/mysql?useSSL=false&serverTimezone=UTC"
+		 *  						  example connectionAddress="jdbc:mysql://localhost/mysql?useSSL=false&serverTimezone=UTC";
 		 *  @param dataBaseName: the name of the dataBase to be created.
 		 *  @param tableName: the name of the table in the dataBase to be created.
-		 * @throws Exception: Exception throw exception error while establishing the connection.
+		 * @throws Exception: exception error while establishin the connection.
 		 */
 		 public DBBookDataProvider(String connectionDriver,String connectionAddress,String dataBaseName,String tableName) throws Exception
 		 {
@@ -83,6 +83,7 @@ public class DBBookDataProvider implements IDataProviderBook
 			/**
 			 * Creates a new object, checks if there's connection with sql server then creates database and tables in the server 
 			 *  and initialize a new bookList..
+			 *  @exception throws exception if connection not established.
 			 */
 			 public DBBookDataProvider() throws Exception
 			 {
@@ -107,7 +108,6 @@ public class DBBookDataProvider implements IDataProviderBook
 	 * only updates the data in sql server and locally with the new book data
 	 * @param book : a Book object
 	 * @return true if book is saved successfully and false if not
-	 * @throws Exception  throw exception error while establishing the connection.
 	 */
 	@Override
 	public boolean saveBook(Book book)
@@ -134,7 +134,8 @@ public class DBBookDataProvider implements IDataProviderBook
 		else 
 		{
 			try {
-				update(getBook(book));
+				//update(getBook(book));
+				update(book);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -153,6 +154,25 @@ public class DBBookDataProvider implements IDataProviderBook
 		if(bookListe.containsKey(bookId)) 
 		{
 			System.out.println(bookId+"="+bookListe.get(bookId));
+		}
+		else 
+		{
+			//System.out.println("Book id: "+bookId+" ist nicht auf dem bookListe");
+			LOG.warn("Book id: \"{}\" is not available in the bookList",bookId);
+		}
+		
+	}
+	
+	/**
+	 * 
+	 * @param book : print a book information of a given book object
+	 */
+	@Override
+	public void printBook(Book book) 
+	{
+		if(bookListe.containsValue(book)) 
+		{
+			System.out.println(bookId+"="+bookListe.get(book));
 		}
 		else 
 		{
@@ -250,9 +270,9 @@ public class DBBookDataProvider implements IDataProviderBook
 	    //	connectionDriver = "com.mysql.cj.jdbc.Driver";
 			//  driver = "com.mysql.jdbc.Driver";
 		//	connectionAddress="jdbc:mysql://localhost/mysql?useSSL=false&serverTimezone=UTC";
-			//Aufruf des Treibers innerhalb der Klasse
+
 			Class.forName(connectionDriver);
-			//Instanz einer Verbinfung über den Treibermanager und Funktion getConnection() mit Vorgabe des DB-Pfades
+
 			connection = DriverManager.getConnection(connectionAddress,"root","");
 			//return connection;            
 		}
@@ -290,9 +310,9 @@ public class DBBookDataProvider implements IDataProviderBook
 	    //	connectionDriver = "com.mysql.cj.jdbc.Driver";
 			//  driver = "com.mysql.jdbc.Driver";
 		//	connectionAddress="jdbc:mysql://localhost/mysql?useSSL=false&serverTimezone=UTC";
-			//Aufruf des Treibers innerhalb der Klasse
+
 			Class.forName(connectionDriver);
-			//Instanz einer Verbinfung über den Treibermanager und Funktion getConnection() mit Vorgabe des DB-Pfades
+
 			connection = DriverManager.getConnection(connectionAddress,"root","");
 			//return connection;            
 		}
@@ -418,26 +438,16 @@ public class DBBookDataProvider implements IDataProviderBook
 	 */
 	private boolean update(Book book) throws Exception 
 	{
-		boolean result;
-		/*
-		String updateCommand=String.format("update %s.%s set authorName=\""+book.getAuthorName()+"\","
-									+ "authorId="+book.getAuthor().getId()+",category= \""+book.getCategory()+"\","
-									+ "releaseYear="+book.getReleaseYear()+",Preis="+book.getPreis()+","
-									+ "discount=\""+book.isDiscount()+"\",discountAmount ="+book.getDiscountAmount()
-									+ ",description=\""+book.getDescription()+"\" "
-									+ "where bookName=\""+book.getBookName()+"\";"   
-									,dataBaseName,tableName);
-									
-		*/
+		boolean result=false;
+
 		result=applyCommandToSql(book,"update");
-	/*    if(result)
-	    {
-	    	//System.out.println("book: \""+book.getBookName()+"\"  update success!!"); 
-	    	LOG.info("book: \"{}\"  update success!!",book.getBookName());
-	    }
-	    
-	   */ 
-	    return result;
+
+		Book oldBook=getBook(book);
+		book.setId(oldBook.getId());
+		bookListe.replace(oldBook.getId(), oldBook, book);
+		
+		return result;
+
 	}
 	
 	

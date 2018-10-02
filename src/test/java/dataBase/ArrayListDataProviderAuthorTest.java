@@ -26,7 +26,7 @@ class ArrayListDataProviderAuthorTest {
 		author2 = new Author("SecondAuthor","SecondBook");
 
 	}
-	
+
 	/**
 	 * test the saveAuthor method which should receive an Author object and save it using dataProvider in  an AuthorList 
 	 * @throws Exception 
@@ -47,7 +47,7 @@ class ArrayListDataProviderAuthorTest {
 	   
 	 }
 	 
-	 
+ 
 	 /**
 	  * test the getAuthor() method which receives an Author ID as an integer number and return the Author object of that Author id if available 
 	  */

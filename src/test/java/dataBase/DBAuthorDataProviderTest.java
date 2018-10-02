@@ -56,13 +56,12 @@ class DBAuthorDataProviderTest {
 
 	}
 
-	
+
 	/**
 	 * test the saveAuthor method which should receive an Author object and save it using dbAuthorDataProvider in  an AuthorList 
 	 * @throws Exception 
 	 */
-	
-	 @Test
+		 @Test
 	 public void saveAuthorTest() throws Exception 
 	 {
 		 
@@ -77,8 +76,8 @@ class DBAuthorDataProviderTest {
 	    System.out.println("-----------------End of SaveAuthorTest------------------");
 	   
 	 }
-	 
-	 
+ 
+ 
 	 /**
 	  * test the getAuthor() method which receives an author ID as an integer number and return the author object of that author id if available 
 	  */

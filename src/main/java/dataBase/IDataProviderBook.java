@@ -14,6 +14,12 @@ public interface IDataProviderBook
 	 * @param bookId : print a book information of a given book id number
 	 */
 	void printBook(int bookId);
+	
+	/**
+	 * 
+	 * @param book : print a book information of a given book object
+	 */
+	void printBook(Book book);
 
 	/**
 	 * Prints all books saved in the books list 

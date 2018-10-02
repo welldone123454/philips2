@@ -7,6 +7,8 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.mysql.cj.x.protobuf.MysqlxCrud.Update;
+
 public class ArrayListDataProviderBook implements IDataProviderBook
 {
 	
@@ -79,6 +81,7 @@ public class ArrayListDataProviderBook implements IDataProviderBook
 		else 
 		{		
 			//System.out.println("book id "+book.getId()+" existes in database!!");
+			updat(book);
 			LOG.warn(" book: \"{}\" exists in database!!",book.getBookName());
 		}
 		
@@ -107,6 +110,34 @@ public class ArrayListDataProviderBook implements IDataProviderBook
 		
 	}
 	
+	/**
+	 * 
+	 * @param book : print a book information of a given book object
+	 */
+	@Override
+	public void printBook(Book book) 
+	{
+		String bookName="";
+		for(int i = 1; i<=bookList.size();i++ ) 
+		{
+			bookName=bookList.get(i).getBookName();
+			if(bookName.equals(book.getBookName())) 
+			{
+				System.out.println(bookList.get(i));
+			}
+		}
+		/*
+		Iterator<Entry<Integer, Book>> mapIt = bookList.entrySet().iterator();
+
+		while(mapIt.hasNext()) 
+		{
+			if(mapIt.next().getValue().getBookName().equals(book.getBookName())) 
+			{
+				System.out.println(mapIt.next());
+			}
+		}
+		*/
+	}
 
 	/**
 	 * Prints all books saved in the books list 
@@ -173,6 +204,23 @@ public class ArrayListDataProviderBook implements IDataProviderBook
 		}
 		return null;
 	}
+	
+	/**
+	 * to update the value of a book object 
+	 * @param book: the new book to replace the old one 
+	 * @return true if replacement succeed false if not
+	 */
+	private boolean updat(Book book) 
+	{
+		boolean result=false;
+		Book oldBook=getBook(book);
+		book.setId(oldBook.getId());
+		result =bookList.replace(oldBook.getId(), oldBook, book);
+		
+		return result;
+	}
+	
+	
 	
 
 }

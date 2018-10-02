@@ -11,9 +11,15 @@ public interface IDataProviderAuthor
 	
 	/**
 	 * 
-	 * @param authorId : print a book information of a given book id number
+	 * @param authorId : print a author information of a given author id number
 	 */
 	void printAuthor(int authorId);
+
+	/**
+	 * 
+	 * @param author : print an Author information of a given author object
+	 */
+	void printAuthor(Author author);
 
 	/**
 	 * Prints all authors saved in the authors list 

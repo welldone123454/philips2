@@ -54,14 +54,14 @@ public class DBAuthorDataProvider implements IDataProviderAuthor
 		 * @param connectionDriver: the connectionsDriver to be connected to database through it.
 		 *  						 example connectionDriver = "com.mysql.cj.jdbc.Driver";
 		 *  @param connectionAddress: the database address to be connected to.
-		 *  						  example connectionAddress="jdbc:mysql://localhost/mysql?useSSL=false&serverTimezone=UTC"
+		 *  						  example connectionAddress="jdbc:mysql://localhost/mysql?useSSL=false&serverTimezone=UTC";
 		 *  @param dataBaseName: the name of the dataBase to be created.
 		 *  @param tableName: the name of the table in the dataBase to be created.
-		 * @throws Exception: ClassNotFoundException thrown when "DB driver not found"while establishing the connection.
-		 * @throws Exception: SQLException thrown when "DB connection couldn't be established,DB address might be wrong?"
+		 * @throws Exception: ClassNotFoundException thrown when "DB driver not found"; while establishing the connection.
+		 * @throws Exception: SQLException thrown when "DB connection couldn't be established"; DB address might be wrong?"
 		 */
 		 public DBAuthorDataProvider(String connectionDriver,String connectionAddress,String dataBaseName,String tableName) 
-		 throws ClassNotFoundException, SQLException{
+		 {
 		        this.connectionDriver=connectionDriver;
 		        this.connectionAddress=connectionAddress;
 			 	iniConnection(connectionDriver,connectionAddress);
@@ -72,9 +72,9 @@ public class DBAuthorDataProvider implements IDataProviderAuthor
 			/**
 			 * Creates a new object, checks if there's connection with sql server then creates database and tables in the server 
 			 *  and initialize a new AuthorList to save authors object..
-			 * @throws Exception: SQLException thrown when "DB connection couldn't be established,DB address might be wrong?"
+			 * @throws Exception: SQLException thrown when "DB connection couldn't be established. DB address might be wrong?"
 			 */
-			 public DBAuthorDataProvider()throws ClassNotFoundException, SQLException{
+			 public DBAuthorDataProvider(){
 			        this.connectionDriver="com.mysql.cj.jdbc.Driver";
 			        this.connectionAddress="jdbc:mysql://localhost/mysql?useSSL=false&serverTimezone=UTC";
 				 	iniConnection(connectionDriver,connectionAddress);
@@ -116,7 +116,8 @@ public class DBAuthorDataProvider implements IDataProviderAuthor
 		}
 		else 
 		{
-			update(getAuthor(author));
+			//update(getAuthor(author));
+			update(author);
 			//System.out.println("Author: \""+author.getAuthorName()+"\" existes in database!!");
 			//LOG.warn("Author: \"{}\" existes in database!!!!",author.getAuthorName());
 		}	
@@ -134,6 +135,23 @@ public class DBAuthorDataProvider implements IDataProviderAuthor
 		if(authorsListe.containsKey(authorId)) 
 		{
 			System.out.println(authorId+"="+authorsListe.get(authorId));
+		}
+		else 
+		{
+			//System.out.println("Author id: "+authorId+" ist nicht auf dem authorsListe");
+			LOG.warn("Author id: \"{}\" is not available in the authorsList!!",authorId);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param author : print an Author information of a given author object
+	 */
+	public void printAuthor(Author author) 
+	{
+		if(authorsListe.containsValue(author)) 
+		{
+			System.out.println(authorId+"="+authorsListe.get(author));
 		}
 		else 
 		{
@@ -203,8 +221,8 @@ public int numberOfAuthorsInListe()
 
 
 /**
- * @param book : a book object 
- * @return if the book  is in the books list it return that book else return null
+ * @param author : an author object 
+ * @return if the author  is in the authors list it return that author else return null
  */
 @Override
 public Author getAuthor(Author author) 
@@ -241,7 +259,6 @@ public Author getAuthor(Author author)
 		/**
 		* checks if there's connection to sql server then open the connection to the dataBase
 		* @return return an open database connection if sql server is connected else return null
-		* @throws Exception throw exception error while establishing the connection
 		* @param connectionDriver: the connectionsDriver to be connected to database through it
 		* @param connectionAddress: the database address to be connected to.
 		*/
@@ -254,9 +271,9 @@ public Author getAuthor(Author author)
 		    //	connectionDriver = "com.mysql.cj.jdbc.Driver";
 				//  driver = "com.mysql.jdbc.Driver";
 			//	connectionAddress="jdbc:mysql://localhost/mysql?useSSL=false&serverTimezone=UTC";
-				//Aufruf des Treibers innerhalb der Klasse
+
 				Class.forName(connectionDriver);
-				//Instanz einer Verbinfung über den Treibermanager und Funktion getConnection() mit Vorgabe des DB-Pfades
+
 				connection = DriverManager.getConnection(connectionAddress,"root","");
 				//return connection;            
 			}
@@ -372,14 +389,14 @@ public Author getAuthor(Author author)
 		 */
 		private boolean update(Author author)
 		{
-			boolean result;
+			boolean result=false;
+			
 			result=applyCommandToSql(author,"update");
-		 /*   if(result)
-		    {
-		    	//System.out.println("author: \""+author.getAuthorName()+"\"  update success!!"); 
-		    	LOG.info("author: \"{}\"  update success!!",author.getAuthorName());
-		    }
-		   */ 
+			
+			Author oldAuthor=getAuthor(author);
+			author.setId(oldAuthor.getId());
+			authorsListe.replace(oldAuthor.getId(), oldAuthor, author);
+			
 		    return result;
 		}
 		
@@ -417,6 +434,8 @@ public Author getAuthor(Author author)
 		
 		
 		/**
+		 * @param dataBaseName : the name of the database to be connected to.
+		 * @param tableName : the name of the table to be created.
 		 * synchronizes authors saved in sql database with the local database saved as a list of authors object.
 		 * and copys the missing authors from sql server to the authors list to be available  locally in the authors list.
 		 */
